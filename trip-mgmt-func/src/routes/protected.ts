@@ -32,7 +32,7 @@ protectedRouter.get(
     await verifyToken(req, res, next);
   },
   async (req, res) => {
-    const response = await runFlow(menuSuggestionFlow, "French");
+    const response = await runFlow(menuSuggestionFlow, "New York");
     res.send("Generate response!" + JSON.stringify(response));
   }
 );

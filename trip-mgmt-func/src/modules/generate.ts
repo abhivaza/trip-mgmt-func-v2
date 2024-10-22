@@ -28,26 +28,38 @@ export const menuSuggestionFlow = defineFlow(
     name: "menuSuggestionFlow",
     inputSchema: z.string(),
     outputSchema: z.string(),
-    // authPolicy: firebaseAuth((user) => {
-    //   // By default, the firebaseAuth policy requires that all requests have an
-    //   // `Authorization: Bearer` header containing the user's Firebase
-    //   // Authentication ID token. All other requests are rejected with error
-    //   // 403. If your app client uses the Cloud Functions for Firebase callable
-    //   // functions feature, the library automatically attaches this header to
-    //   // requests.
-    //   // You should also set additional policy requirements as appropriate for
-    //   // your app. For example:
-    //   // if (!user.email_verified) {
-    //   //   throw new Error("Verified email required to run flow");
-    //   // }
-    // }),
   },
   async (subject) => {
     // Construct a request and send it to the model API.
-    const prompt = `Suggest an item for the menu of a ${subject} themed restaurant`;
+    const prompt = `Create a day by day itinerary for ${subject} city.`;
+    console.log(prompt);
     const llmResponse = await generate({
       model: gemini15Flash,
       prompt: prompt,
+      output: {
+        schema: z.array(
+          z.object({
+            dayNumber: z.string().describe("day number"),
+            morning: z
+              .string()
+              .describe("acitivity can be done in morning time"),
+            afternoon: z
+              .string()
+              .describe("acitivity can be done in afternoon time"),
+            evening: z
+              .string()
+              .describe("acitivity can be done in evening time"),
+            otherActivities: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  duration: z.number(),
+                })
+              )
+              .describe("acitivity name and duration in minutes"),
+          })
+        ),
+      },
       config: {
         temperature: 1,
       },
@@ -57,6 +69,9 @@ export const menuSuggestionFlow = defineFlow(
     // convert it to a string, but more complicated flows might coerce the
     // response into structured output or chain the response into another
     // LLM call, etc.
+
+    console.log(llmResponse);
+
     return llmResponse.text();
   }
 );
