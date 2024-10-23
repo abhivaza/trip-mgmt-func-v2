@@ -22,12 +22,31 @@ configureGenkit({
   enableTracingAndMetrics: true,
 });
 
-// Define a simple flow that prompts an LLM to generate menu suggestions.
-export const menuSuggestionFlow = defineFlow(
+const tripSchema = z.object({
+  itinerary: z.array(
+    z.object({
+      dayNumber: z.string().describe("day number"),
+      morning: z.string().describe("acitivity can be done in morning time"),
+      afternoon: z.string().describe("acitivity can be done in afternoon time"),
+      lunchRestaurant: z.string().describe("restaurant for lunch"),
+      evening: z.string().describe("acitivity can be done in evening time"),
+      dinnerRestaurant: z.string().describe("restaurant for dinner"),
+      otherActivities: z
+        .array(
+          z.object({
+            name: z.string().describe("acitivity name"),
+            duration: z.number().describe("acitivity duration in minutes"),
+          })
+        )
+        .describe("acitivity name and duration in minutes"),
+    })
+  ),
+});
+
+export const tripGenerationFlow = defineFlow(
   {
-    name: "menuSuggestionFlow",
+    name: "tripGenerationFlow",
     inputSchema: z.string(),
-    outputSchema: z.string(),
   },
   async (subject) => {
     // Construct a request and send it to the model API.
@@ -36,42 +55,12 @@ export const menuSuggestionFlow = defineFlow(
     const llmResponse = await generate({
       model: gemini15Flash,
       prompt: prompt,
-      output: {
-        schema: z.array(
-          z.object({
-            dayNumber: z.string().describe("day number"),
-            morning: z
-              .string()
-              .describe("acitivity can be done in morning time"),
-            afternoon: z
-              .string()
-              .describe("acitivity can be done in afternoon time"),
-            evening: z
-              .string()
-              .describe("acitivity can be done in evening time"),
-            otherActivities: z
-              .array(
-                z.object({
-                  name: z.string(),
-                  duration: z.number(),
-                })
-              )
-              .describe("acitivity name and duration in minutes"),
-          })
-        ),
-      },
+      output: { schema: tripSchema },
       config: {
         temperature: 1,
       },
     });
 
-    // Handle the response from the model API. In this sample, we just
-    // convert it to a string, but more complicated flows might coerce the
-    // response into structured output or chain the response into another
-    // LLM call, etc.
-
-    console.log(llmResponse);
-
-    return llmResponse.text();
+    return llmResponse.output();
   }
 );

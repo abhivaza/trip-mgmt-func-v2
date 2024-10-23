@@ -5,7 +5,7 @@ import { verifyToken } from "../middleware/auth";
 import { AuthenticatedRequest } from "../type";
 
 import { runFlow } from "@genkit-ai/flow";
-import { menuSuggestionFlow } from "../modules/generate";
+import { tripGenerationFlow } from "../modules/generate";
 
 const protectedRouter = Router();
 
@@ -32,7 +32,7 @@ protectedRouter.get(
     await verifyToken(req, res, next);
   },
   async (req, res) => {
-    const response = await runFlow(menuSuggestionFlow, "New York");
+    const response = await runFlow(tripGenerationFlow, "New York");
     res.send("Generate response!" + JSON.stringify(response));
   }
 );
