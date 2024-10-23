@@ -26,14 +26,19 @@ protectedRouter.get(
   }
 );
 
-protectedRouter.get(
+protectedRouter.post(
   "/generate",
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
   async (req, res) => {
-    const response = await runFlow(tripGenerationFlow, "New York");
-    res.send("Generate response!" + JSON.stringify(response));
+    const { destination } = req.body;
+    console.log(destination);
+    const response = await runFlow(
+      tripGenerationFlow,
+      destination || "New York"
+    );
+    res.send(response.itinerary);
   }
 );
 

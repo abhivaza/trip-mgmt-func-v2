@@ -25,20 +25,22 @@ configureGenkit({
 const tripSchema = z.object({
   itinerary: z.array(
     z.object({
-      dayNumber: z.string().describe("day number"),
-      morning: z.string().describe("acitivity can be done in morning time"),
-      afternoon: z.string().describe("acitivity can be done in afternoon time"),
-      lunchRestaurant: z.string().describe("restaurant for lunch"),
-      evening: z.string().describe("acitivity can be done in evening time"),
-      dinnerRestaurant: z.string().describe("restaurant for dinner"),
-      otherActivities: z
-        .array(
-          z.object({
-            name: z.string().describe("acitivity name"),
-            duration: z.number().describe("acitivity duration in minutes"),
-          })
-        )
-        .describe("acitivity name and duration in minutes"),
+      day: z.number().describe("The day number in the itinerary."),
+      title: z.string().describe("The title of the day's activities."),
+      description: z
+        .string()
+        .describe("A brief description of the day's overall plan."),
+      activities: z.object({
+        morning: z
+          .array(z.string())
+          .describe("Activities scheduled for the morning."),
+        afternoon: z
+          .array(z.string())
+          .describe("Activities scheduled for the afternoon."),
+        evening: z
+          .array(z.string())
+          .describe("Activities scheduled for the evening."),
+      }),
     })
   ),
 });
