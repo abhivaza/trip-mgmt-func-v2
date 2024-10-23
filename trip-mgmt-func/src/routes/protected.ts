@@ -38,7 +38,7 @@ protectedRouter.post(
       tripGenerationFlow,
       destination || "New York"
     );
-    res.send(response.itinerary);
+    res.send(response);
   }
 );
 

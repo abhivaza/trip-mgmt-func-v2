@@ -23,6 +23,7 @@ configureGenkit({
 });
 
 const tripSchema = z.object({
+  message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   itinerary: z.array(
     z.object({
       day: z.number().describe("The day number in the itinerary."),
@@ -52,7 +53,7 @@ export const tripGenerationFlow = defineFlow(
   },
   async (subject) => {
     // Construct a request and send it to the model API.
-    const prompt = `Create a day by day itinerary for ${subject} city.`;
+    const prompt = `Must give itinerary for valid city only, othwerise return FAILURE in message field. Create a day by day itinerary for ${subject} city.`;
     console.log(prompt);
     const llmResponse = await generate({
       model: gemini15Flash,
