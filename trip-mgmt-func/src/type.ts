@@ -8,7 +8,12 @@ interface AuthenticatedRequest extends Request {
 
 export type { AuthenticatedRequest };
 
-export const tripSchema = z.object({
+export const tripGenerationInputSchema = z.object({
+  cityName: z.string().describe("The name of the city."),
+  userId: z.string().describe("The email of the user."),
+});
+
+export const tripOutputSchema = z.object({
   message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   cityName: z.string().describe("The name of the city."),
   countryName: z.string().describe("The name of the country."),
@@ -40,4 +45,4 @@ export const tripSchema = z.object({
   ),
 });
 
-export type TripDocument = z.infer<typeof tripSchema>;
+export type TripDocument = z.infer<typeof tripOutputSchema>;

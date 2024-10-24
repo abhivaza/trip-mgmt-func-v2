@@ -1,5 +1,3 @@
-import * as z from "zod";
-
 import { generate } from "@genkit-ai/ai";
 import { configureGenkit } from "@genkit-ai/core";
 import { firebase } from "@genkit-ai/firebase";
@@ -7,7 +5,11 @@ import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
 
 import { defineFlow } from "@genkit-ai/flow";
 import { defineString } from "firebase-functions/params";
-import { TripDocument, tripSchema } from "../type";
+import {
+  TripDocument,
+  tripGenerationInputSchema,
+  tripOutputSchema,
+} from "../type";
 import { storeLLMResponse } from "./database";
 
 configureGenkit({
@@ -28,18 +30,18 @@ configureGenkit({
 export const tripGenerationFlow = defineFlow(
   {
     name: "tripGenerationFlow",
-    inputSchema: z.string(),
+    inputSchema: tripGenerationInputSchema,
   },
   async (subject) => {
     // Construct a request and send it to the model API.
     const prompt = `Must give itinerary for valid city only, 
       othwerise return FAILURE in message field. 
-      Create a day by day itinerary for ${subject} city.`;
+      Create a day by day itinerary for ${subject.cityName} city.`;
     console.log(prompt);
     const llmResponse = await generate({
       model: gemini15Flash,
       prompt: prompt,
-      output: { schema: tripSchema },
+      output: { schema: tripOutputSchema },
       config: {
         temperature: 1,
       },
@@ -49,7 +51,7 @@ export const tripGenerationFlow = defineFlow(
 
     if (response?.message !== "FAILURE") {
       // Store the response in Firestore
-      const documentId = await storeLLMResponse(response);
+      const documentId = await storeLLMResponse(response, subject.userId);
       // Add the Firestore document ID to the response
       return {
         ...response,

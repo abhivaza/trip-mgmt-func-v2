@@ -3,13 +3,21 @@ import { TripDocument } from "../type";
 
 const getDb = () => admin.firestore();
 
-export const storeLLMResponse = async (llmResponse: TripDocument) => {
+export const storeLLMResponse = async (
+  llmResponse: TripDocument,
+  userId?: string
+) => {
   try {
     const db = getDb();
     const docRef = db.collection("trip-itineraries").doc();
     await docRef.set({
       city: llmResponse.cityName,
+      country: llmResponse.countryName,
+      timestamp: new Date(),
+      popularityRank: llmResponse.popularityRank,
+      tags: llmResponse.tags,
       itinerary: llmResponse.itinerary,
+      createdBy: userId,
     });
     return docRef.id;
   } catch (error) {

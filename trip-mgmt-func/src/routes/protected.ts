@@ -31,13 +31,13 @@ protectedRouter.post(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  async (req, res) => {
+  async (req: AuthenticatedRequest, res) => {
     const { destination } = req.body;
     console.log(destination);
-    const response = await runFlow(
-      tripGenerationFlow,
-      destination || "New York"
-    );
+    const response = await runFlow(tripGenerationFlow, {
+      cityName: destination,
+      userId: req.user?.uid || "",
+    });
     res.send(response);
   }
 );
