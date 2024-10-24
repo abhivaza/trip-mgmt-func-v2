@@ -7,6 +7,8 @@ import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
 
 import { defineFlow } from "@genkit-ai/flow";
 import { defineString } from "firebase-functions/params";
+import { TripDocument, tripSchema } from "../type";
+import { storeLLMResponse } from "./database";
 
 configureGenkit({
   plugins: [
@@ -21,30 +23,6 @@ configureGenkit({
   logLevel: "debug",
   // Perform OpenTelemetry instrumentation and enable trace collection.
   enableTracingAndMetrics: true,
-});
-
-const tripSchema = z.object({
-  message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
-  itinerary: z.array(
-    z.object({
-      day: z.number().describe("The day number in the itinerary."),
-      title: z.string().describe("The title of the day's activities."),
-      description: z
-        .string()
-        .describe("A brief description of the day's overall plan."),
-      activities: z.object({
-        morning: z
-          .array(z.string())
-          .describe("Activities scheduled for the morning."),
-        afternoon: z
-          .array(z.string())
-          .describe("Activities scheduled for the afternoon."),
-        evening: z
-          .array(z.string())
-          .describe("Activities scheduled for the evening."),
-      }),
-    })
-  ),
 });
 
 export const tripGenerationFlow = defineFlow(
@@ -67,6 +45,18 @@ export const tripGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output();
+    const response: TripDocument = llmResponse.output() as TripDocument;
+
+    if (response?.message !== "FAILURE") {
+      // Store the response in Firestore
+      const documentId = await storeLLMResponse(response);
+      // Add the Firestore document ID to the response
+      return {
+        ...response,
+        trip_id: documentId,
+      };
+    } else {
+      return response;
+    }
   }
 );
