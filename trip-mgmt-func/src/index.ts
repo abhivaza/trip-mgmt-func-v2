@@ -16,14 +16,11 @@ functions.onInit(() => {
     } as admin.ServiceAccount),
   });
 
-  // Get the Firestore instance
-  const firestore = admin.firestore();
-
-  // Set the Firestore emulator's host and port
-  firestore.settings({
-    host: "localhost:8080", // Default emulator port
-    ssl: false,
-  });
+  // const firestore = admin.firestore();
+  // firestore.settings({
+  //   host: "localhost:8080", // Default emulator port
+  //   ssl: false,
+  // });
 });
 
 import app from "./app";
