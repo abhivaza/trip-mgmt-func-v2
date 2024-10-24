@@ -1,15 +1,14 @@
+import * as admin from "firebase-admin";
 import { TripDocument } from "../type";
 
-import * as admin from "firebase-admin";
-
-const db = admin.firestore();
+const getDb = () => admin.firestore();
 
 export const storeLLMResponse = async (llmResponse: TripDocument) => {
   try {
+    const db = getDb();
     const docRef = db.collection("trip-itineraries").doc();
     await docRef.set({
       city: llmResponse.cityName,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
       itinerary: llmResponse.itinerary,
     });
     return docRef.id;
@@ -23,6 +22,7 @@ export const getStoredItinerary = async (
   documentId: string
 ): Promise<admin.firestore.DocumentData | null> => {
   try {
+    const db = getDb();
     const doc = await db.collection("trip-itineraries").doc(documentId).get();
     if (!doc.exists) {
       throw new Error("Itinerary not found");
@@ -34,11 +34,11 @@ export const getStoredItinerary = async (
   }
 };
 
-// Function to query itineraries by city
 export const queryItinerariesByCity = async (
   city: string
 ): Promise<Array<TripDocument & { id: string }>> => {
   try {
+    const db = getDb();
     const snapshot = await db
       .collection("trip-itineraries")
       .where("city", "==", city)
