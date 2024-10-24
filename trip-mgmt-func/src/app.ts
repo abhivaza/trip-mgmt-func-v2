@@ -8,7 +8,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
-  origin: defineString("CORS_ORIGIN_DOMAINS").value().split(",") || [],
+  origin: defineString("APP_CORS_ORIGIN_DOMAINS").value().split(",") || [],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,

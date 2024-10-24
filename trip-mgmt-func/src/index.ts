@@ -1,17 +1,15 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import app from "./app";
 import { defineString } from "firebase-functions/params";
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      // Your service account credentials
-      projectId: defineString("FIREBASE_PROJECT_ID").value(),
-      clientEmail: defineString("FIREBASE_CLIENT_EMAIL").value(),
-      privateKey: defineString("FIREBASE_PRIVATE_KEY").value(),
-    }),
-  });
-}
+admin.initializeApp({
+  credential: admin.credential.cert({
+    // Your service account credentials
+    projectId: defineString("APP_FIREBASE_PROJECT_ID").value(),
+    clientEmail: defineString("APP_FIREBASE_CLIENT_EMAIL").value(),
+    privateKey: defineString("APP_FIREBASE_PRIVATE_KEY").value(),
+  }),
+});
 
+import app from "./app";
 export const api = functions.https.onRequest(app);

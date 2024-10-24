@@ -17,7 +17,7 @@ configureGenkit({
     // by passing in a config object; if you don't, the Google AI plugin uses
     // the value from the GOOGLE_GENAI_API_KEY environment variable, which is
     // the recommended practice.
-    googleAI({ apiKey: defineString("GOOGLE_GENAI_API_KEY").value() }),
+    googleAI({ apiKey: defineString("APP_GOOGLE_GENAI_API_KEY").value() }),
   ],
   // Log debug output to tbe console.
   logLevel: "debug",
