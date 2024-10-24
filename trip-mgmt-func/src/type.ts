@@ -9,14 +9,14 @@ interface AuthenticatedRequest extends Request {
 export type { AuthenticatedRequest };
 
 export const tripGenerationInputSchema = z.object({
-  cityName: z.string().describe("The name of the city."),
+  city: z.string().describe("The name of the city."),
   userId: z.string().describe("The email of the user."),
 });
 
 export const tripOutputSchema = z.object({
   message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
-  cityName: z.string().describe("The name of the city."),
-  countryName: z.string().describe("The name of the country."),
+  city: z.string().describe("The name of the city."),
+  country: z.string().describe("The name of the country."),
   popularityRank: z
     .number()
     .describe("The city's popularity rank among tourists in the country."),

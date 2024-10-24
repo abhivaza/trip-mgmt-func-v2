@@ -11,8 +11,8 @@ export const storeLLMResponse = async (
     const db = getDb();
     const docRef = db.collection("trip-itineraries").doc();
     await docRef.set({
-      city: llmResponse.cityName,
-      country: llmResponse.countryName,
+      city: llmResponse.city,
+      country: llmResponse.country,
       timestamp: new Date(),
       popularityRank: llmResponse.popularityRank,
       tags: llmResponse.tags,

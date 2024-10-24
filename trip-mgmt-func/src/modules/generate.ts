@@ -36,7 +36,7 @@ export const tripGenerationFlow = defineFlow(
     // Construct a request and send it to the model API.
     const prompt = `Must give itinerary for valid city only, 
       othwerise return FAILURE in message field. 
-      Create a day by day itinerary for ${subject.cityName} city.`;
+      Create a day by day itinerary for ${subject.city} city.`;
     console.log(prompt);
     const llmResponse = await generate({
       model: gemini15Flash,
@@ -55,7 +55,7 @@ export const tripGenerationFlow = defineFlow(
       // Add the Firestore document ID to the response
       return {
         ...response,
-        trip_id: documentId,
+        tripId: documentId,
       };
     } else {
       return response;
