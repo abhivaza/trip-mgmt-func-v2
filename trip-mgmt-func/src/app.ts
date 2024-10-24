@@ -2,15 +2,13 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import protectedRouter from "./routes/protected";
 import publicRouter from "./routes/public";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { defineString } from "firebase-functions/params";
 
 const app = express();
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
-  origin: ["http://localhost:3000", "https://yourdomain.com"],
+  origin: defineString("CORS_ORIGIN_DOMAINS").value().split(",") || [],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,

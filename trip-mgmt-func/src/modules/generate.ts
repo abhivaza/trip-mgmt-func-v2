@@ -6,6 +6,7 @@ import { firebase } from "@genkit-ai/firebase";
 import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
 
 import { defineFlow } from "@genkit-ai/flow";
+import { defineString } from "firebase-functions/params";
 
 configureGenkit({
   plugins: [
@@ -14,7 +15,7 @@ configureGenkit({
     // by passing in a config object; if you don't, the Google AI plugin uses
     // the value from the GOOGLE_GENAI_API_KEY environment variable, which is
     // the recommended practice.
-    googleAI({ apiKey: process.env.GOOGLE_GENAI_API_KEY }),
+    googleAI({ apiKey: defineString("GOOGLE_GENAI_API_KEY").value() }),
   ],
   // Log debug output to tbe console.
   logLevel: "debug",
@@ -53,7 +54,9 @@ export const tripGenerationFlow = defineFlow(
   },
   async (subject) => {
     // Construct a request and send it to the model API.
-    const prompt = `Must give itinerary for valid city only, othwerise return FAILURE in message field. Create a day by day itinerary for ${subject} city.`;
+    const prompt = `Must give itinerary for valid city only, 
+      othwerise return FAILURE in message field. 
+      Create a day by day itinerary for ${subject} city.`;
     console.log(prompt);
     const llmResponse = await generate({
       model: gemini15Flash,
