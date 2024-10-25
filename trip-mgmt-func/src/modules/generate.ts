@@ -1,31 +1,13 @@
 import { generate } from "@genkit-ai/ai";
-import { configureGenkit } from "@genkit-ai/core";
-import { firebase } from "@genkit-ai/firebase";
-import { gemini15Flash, googleAI } from "@genkit-ai/googleai";
+import { gemini15Flash } from "@genkit-ai/googleai";
 
 import { defineFlow } from "@genkit-ai/flow";
-import { defineString } from "firebase-functions/params";
 import {
   TripDocument,
   tripGenerationInputSchema,
   tripOutputSchema,
 } from "../type";
 import { storeLLMResponse } from "./database";
-
-configureGenkit({
-  plugins: [
-    firebase(),
-    // Load the Google AI plugin. You can optionally specify your API key
-    // by passing in a config object; if you don't, the Google AI plugin uses
-    // the value from the GOOGLE_GENAI_API_KEY environment variable, which is
-    // the recommended practice.
-    googleAI({ apiKey: defineString("APP_GOOGLE_GENAI_API_KEY").value() }),
-  ],
-  // Log debug output to tbe console.
-  logLevel: "debug",
-  // Perform OpenTelemetry instrumentation and enable trace collection.
-  enableTracingAndMetrics: true,
-});
 
 export const tripGenerationFlow = defineFlow(
   {

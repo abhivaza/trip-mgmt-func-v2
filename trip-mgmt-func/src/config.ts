@@ -14,6 +14,10 @@ interface FirebaseConfig {
     client_x509_cert_url: string;
     universe_domain: string;
   };
+  appConfig: {
+    corsOrigin: string[];
+    googleAIApiKey: string;
+  };
 }
 
 export const getFirebaseConfig = (): FirebaseConfig => {
@@ -34,6 +38,10 @@ export const getFirebaseConfig = (): FirebaseConfig => {
         "SERVICE_ACCT_CLIENT_X509_CERT_URL"
       ).value(),
       universe_domain: defineString("SERVICE_ACCT_UNIVERSE_DOMAIN").value(),
+    },
+    appConfig: {
+      corsOrigin: defineString("APP_CORS_ORIGIN_DOMAINS").value().split(","),
+      googleAIApiKey: defineString("APP_GOOGLE_GENAI_API_KEY").value(),
     },
   };
 };

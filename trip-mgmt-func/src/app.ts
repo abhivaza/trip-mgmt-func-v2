@@ -2,13 +2,13 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import protectedRouter from "./routes/protected";
 import publicRouter from "./routes/public";
-import { defineString } from "firebase-functions/params";
+import { getFirebaseConfig } from "./config";
 
 const app = express();
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
-  origin: defineString("APP_CORS_ORIGIN_DOMAINS").value().split(",") || [],
+  origin: getFirebaseConfig().appConfig.corsOrigin,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
