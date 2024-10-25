@@ -3,7 +3,6 @@
   "include": ["src"],
   "compilerOptions": {
     "module": "commonjs",
-    "resolveJsonModule": true,
     "noImplicitReturns": true,
     "outDir": "lib",
     "sourceMap": true,
