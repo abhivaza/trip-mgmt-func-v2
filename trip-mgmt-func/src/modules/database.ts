@@ -1,5 +1,10 @@
 import * as admin from "firebase-admin";
 import { TripDocument } from "../type";
+import { embed } from "@genkit-ai/ai/embedder";
+import { textEmbeddingGecko001 } from "@genkit-ai/googleai";
+import { Document } from "@genkit-ai/ai/retriever";
+import { FieldValue } from "firebase-admin/firestore";
+import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 
 const getDb = () => admin.firestore();
 
@@ -10,6 +15,12 @@ export const storeLLMResponse = async (
   try {
     const db = getDb();
     const docRef = db.collection("trip-itineraries").doc();
+
+    const embedding = await embed({
+      embedder: textEmbeddingGecko001,
+      content: Document.fromText(JSON.stringify(llmResponse.itinerary)),
+    });
+
     await docRef.set({
       city: llmResponse.city,
       country: llmResponse.country,
@@ -18,7 +29,10 @@ export const storeLLMResponse = async (
       tags: llmResponse.tags,
       itinerary: llmResponse.itinerary,
       createdBy: userId,
+      embedding: FieldValue.vector(embedding),
+      itineraryText: JSON.stringify(llmResponse.itinerary),
     });
+
     return docRef.id;
   } catch (error) {
     console.error("Error storing LLM response:", error);
@@ -62,4 +76,16 @@ export const queryItinerariesByCity = async (
     console.error("Error querying itineraries:", error);
     throw error;
   }
+};
+
+export const getFirestoreRetriever = () => {
+  return defineFirestoreRetriever({
+    name: "trip-summary",
+    firestore: getDb(),
+    collection: "trip-itineraries",
+    contentField: "itineraryText",
+    vectorField: "embedding",
+    embedder: textEmbeddingGecko001, // Import from '@genkit-ai/googleai' or '@genkit-ai/vertexai'
+    distanceMeasure: "COSINE", // "EUCLIDEAN", "DOT_PRODUCT", or "COSINE" (default)
+  });
 };

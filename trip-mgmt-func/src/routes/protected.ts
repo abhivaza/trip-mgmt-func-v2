@@ -3,7 +3,7 @@ import { verifyToken } from "../middleware/auth";
 import { AuthenticatedRequest } from "../type";
 
 import { runFlow } from "@genkit-ai/flow";
-import { tripGenerationFlow } from "../modules/generate";
+import { tripGenerationFlow, tripSearchFlow } from "../modules/generate";
 import { getStoredItinerary } from "../modules/database";
 
 const protectedRouter = Router();
@@ -23,6 +23,18 @@ protectedRouter.get(
         console.error("Error retrieving itinerary:", error);
         next(error);
       });
+  }
+);
+
+protectedRouter.post(
+  "/:trip_id/chat",
+  async (req: AuthenticatedRequest, res, next: NextFunction) => {
+    await verifyToken(req, res, next);
+  },
+  async (req: AuthenticatedRequest, res) => {
+    const { question } = req.body;
+    const response = await runFlow(tripSearchFlow, question);
+    res.send({ answer: response });
   }
 );
 

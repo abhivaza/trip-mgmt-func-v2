@@ -13,7 +13,7 @@ export const tripGenerationInputSchema = z.object({
   userId: z.string().describe("The email of the user."),
 });
 
-export const tripOutputSchema = z.object({
+export const tripGenerationOutputSchema = z.object({
   message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   city: z.string().describe("The name of the city."),
   country: z.string().describe("The name of the country."),
@@ -45,4 +45,4 @@ export const tripOutputSchema = z.object({
   ),
 });
 
-export type TripDocument = z.infer<typeof tripOutputSchema>;
+export type TripDocument = z.infer<typeof tripGenerationOutputSchema>;
