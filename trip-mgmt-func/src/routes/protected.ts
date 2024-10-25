@@ -33,7 +33,6 @@ protectedRouter.post(
   },
   async (req: AuthenticatedRequest, res) => {
     const { destination } = req.body;
-    console.log(destination);
     const response = await runFlow(tripGenerationFlow, {
       city: destination,
       userId: req.user?.uid || "",

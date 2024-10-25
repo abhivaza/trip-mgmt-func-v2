@@ -37,7 +37,7 @@ export const tripGenerationFlow = defineFlow(
     const prompt = `Must give itinerary for valid city only, 
       othwerise return FAILURE in message field. 
       Create a day by day itinerary for ${subject.city} city.`;
-    console.log(prompt);
+
     const llmResponse = await generate({
       model: gemini15Flash,
       prompt: prompt,
