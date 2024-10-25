@@ -30,7 +30,7 @@ functions.onInit(() => {
       // by passing in a config object; if you don't, the Google AI plugin uses
       // the value from the GOOGLE_GENAI_API_KEY environment variable, which is
       // the recommended practice.
-      googleAI({ apiKey: getFirebaseConfig().appConfig.googleAIApiKey }),
+      googleAI({ apiKey: getFirebaseConfig().genAIConfig.googleAIApiKey }),
     ],
     // Log debug output to tbe console.
     logLevel: "debug",
