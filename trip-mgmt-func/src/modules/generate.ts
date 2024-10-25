@@ -9,6 +9,7 @@ import {
 } from "../type";
 import { getFirestoreRetriever, storeLLMResponse } from "./database";
 import { z } from "zod";
+import { tripGenerationPrompt } from "../prompts/prompts";
 
 export const tripGenerationFlow = defineFlow(
   {
@@ -17,22 +18,13 @@ export const tripGenerationFlow = defineFlow(
     outputSchema: tripGenerationOutputSchema,
   },
   async (subject) => {
-    // Construct a request and send it to the model API.
-    const prompt = `Must give itinerary for valid city only, 
-      othwerise return FAILURE in message field. 
-      Create a day by day itinerary for ${subject.city} city.`;
-
-    const llmResponse = await generate({
-      model: gemini15Flash,
-      prompt: prompt,
-      output: { schema: tripGenerationOutputSchema },
-      config: {
-        temperature: 1,
-      },
+    const llmResponse = await tripGenerationPrompt.generate<
+      typeof tripGenerationOutputSchema
+    >({
+      input: { name: subject.city },
     });
 
-    const response: TripDocument = llmResponse.output() as TripDocument;
-
+    const response: TripDocument = llmResponse.output();
     if (response?.message !== "FAILURE") {
       // Store the response in Firestore
       const documentId = await storeLLMResponse(response, subject.userId);
