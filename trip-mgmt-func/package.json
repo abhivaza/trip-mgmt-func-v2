@@ -21,6 +21,7 @@
     "@genkit-ai/firebase": "^0.5.16",
     "@genkit-ai/flow": "^0.5.16",
     "@genkit-ai/googleai": "^0.5.16",
+    "@genkit-ai/vertexai": "^0.5.17",
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "firebase-admin": "^12.6.0",
