@@ -10,7 +10,6 @@ export type { AuthenticatedRequest };
 
 export const tripGenerationInputSchema = z.object({
   city: z.string().describe("The name of the city."),
-  userId: z.string().describe("The email of the user."),
 });
 
 export const tripGenerationOutputSchema = z.object({

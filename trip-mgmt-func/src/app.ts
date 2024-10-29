@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/trip", protectedRouter); // Auth routes under /api/auth
+app.use("/app", protectedRouter); // Auth routes under /api/auth
 app.use("/", publicRouter);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

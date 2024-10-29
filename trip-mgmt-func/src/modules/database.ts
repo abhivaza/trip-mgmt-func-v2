@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import { TripDocument } from "../type";
 import { embed } from "@genkit-ai/ai/embedder";
 import { textEmbeddingGecko001 } from "@genkit-ai/googleai";
-import { Document } from "@genkit-ai/ai/retriever";
+import { Document, retrieve } from "@genkit-ai/ai/retriever";
 import { FieldValue } from "firebase-admin/firestore";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 
@@ -78,6 +78,27 @@ export const queryItinerariesByCity = async (
   }
 };
 
+export const getUserItineraries = async (
+  userId: string
+): Promise<Array<TripDocument & { id: string }>> => {
+  try {
+    const db = getDb();
+    const snapshot = await db
+      .collection("trip-itineraries")
+      .where("createdBy", "==", userId)
+      .orderBy("timestamp", "desc")
+      .get();
+
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as TripDocument),
+    }));
+  } catch (error) {
+    console.error("Error retrieving user itineraries:", error);
+    throw error;
+  }
+};
+
 export const getFirestoreRetriever = () => {
   return defineFirestoreRetriever({
     name: "trip-summary",
@@ -88,4 +109,20 @@ export const getFirestoreRetriever = () => {
     embedder: textEmbeddingGecko001, // Import from '@genkit-ai/googleai' or '@genkit-ai/vertexai'
     distanceMeasure: "COSINE", // "EUCLIDEAN", "DOT_PRODUCT", or "COSINE" (default)
   });
+};
+
+export const getChatContext = async (subject: string): Promise<string> => {
+  try {
+    const docs = await retrieve({
+      retriever: getFirestoreRetriever(),
+      query: subject,
+      options: { limit: 3 },
+    });
+
+    const context = docs.map((doc) => doc.content[0].text).join("\n\n");
+    return context;
+  } catch (error) {
+    console.error("Error retrieving user itineraries:", error);
+    throw error;
+  }
 };
