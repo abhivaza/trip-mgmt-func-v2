@@ -9,7 +9,6 @@ import {
 } from "../type";
 import { getFirestoreRetriever, storeLLMResponse } from "./database";
 import { z } from "zod";
-import { tripGenerationPrompt } from "../prompts/prompts";
 
 export const tripGenerationFlow = defineFlow(
   {
@@ -18,13 +17,22 @@ export const tripGenerationFlow = defineFlow(
     outputSchema: tripGenerationOutputSchema,
   },
   async (subject) => {
-    const llmResponse = await tripGenerationPrompt.generate<
-      typeof tripGenerationOutputSchema
-    >({
-      input: { name: subject.city },
+    const prompt = `You are acting as travel advisor. You must generate itinerary for valid city only.
+      If city is not valid, return FAILURE in message field of output JSON document.
+      If city is valid, return SUCCESS in message field of output JSON document.
+      Output is in JSON format, all JSON field values must be using single quotes instead of double quotes.
+      Give all these instructions, create a day by day itinerary for ${subject.city} city.`;
+
+    const llmResponse = await generate({
+      model: gemini15Flash,
+      prompt: prompt,
+      output: { format: "json", schema: tripGenerationOutputSchema },
+      config: {
+        temperature: 1,
+      },
     });
 
-    const response: TripDocument = llmResponse.output();
+    const response: TripDocument = llmResponse.output() as TripDocument;
     if (response?.message !== "FAILURE") {
       // Store the response in Firestore
       const documentId = await storeLLMResponse(response, subject.userId);

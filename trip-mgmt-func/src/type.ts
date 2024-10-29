@@ -30,17 +30,11 @@ export const tripGenerationOutputSchema = z.object({
       description: z
         .string()
         .describe("A brief description of the day's overall plan."),
-      activities: z.object({
-        morning: z
-          .array(z.string())
-          .describe("Activities scheduled for the morning."),
-        afternoon: z
-          .array(z.string())
-          .describe("Activities scheduled for the afternoon."),
-        evening: z
-          .array(z.string())
-          .describe("Activities scheduled for the evening."),
-      }),
+      activities: z
+        .array(z.string())
+        .describe(
+          "Recommended things to do around or at the given city during the day."
+        ),
     })
   ),
 });

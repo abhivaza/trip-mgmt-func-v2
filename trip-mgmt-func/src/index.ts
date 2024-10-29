@@ -8,19 +8,19 @@ import { getFirebaseConfig } from "./config";
 
 functions.onInit(() => {
   // initialize firebase
-  admin.initializeApp({
-    credential: admin.credential.cert(
-      getFirebaseConfig().serviceAccount as admin.ServiceAccount
-    ),
-  });
+  // admin.initializeApp({
+  //   credential: admin.credential.cert(
+  //     getFirebaseConfig().serviceAccount as admin.ServiceAccount
+  //   ),
+  // });
 
   // Uncomment for running local DB
-  // admin.initializeApp();
-  // const firestore = admin.firestore();
-  // firestore.settings({
-  //   host: "localhost:8080", // Default emulator port
-  //   ssl: false,
-  // });
+  admin.initializeApp();
+  const firestore = admin.firestore();
+  firestore.settings({
+    host: "localhost:8080", // Default emulator port
+    ssl: false,
+  });
 
   // initialize genkit
   configureGenkit({
