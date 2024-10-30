@@ -44,4 +44,4 @@ functions.onInit(() => {
   });
 });
 
-export const api = functions.runWith({ memory: "256MB" }).https.onRequest(app);
+export const api = functions.runWith({ memory: "512MB" }).https.onRequest(app);

@@ -76,24 +76,28 @@ export const tripImageGenerationFlow = defineFlow(
     inputSchema: z.string().describe("name of the city"),
   },
   async (city) => {
-    // Construct a request and send it to the model API.
-    const prompt = `A must-see iconic image for the city of ${city}.`;
+    if (city) {
+      return "https://storage.googleapis.com/trip-mgmt-751d8.appspot.com/new-york.png";
+    } else {
+      // Construct a request and send it to the model API.
+      const prompt = `A must-see iconic image for the city of ${city}.`;
 
-    const mediaResponse = await generate({
-      model: imagen2,
-      prompt: prompt,
-      output: { format: "media" },
-    });
-    const media = mediaResponse.media();
-    if (!media) throw new Error("No media generated.");
+      const mediaResponse = await generate({
+        model: imagen2,
+        prompt: prompt,
+        output: { format: "media" },
+      });
+      const media = mediaResponse.media();
+      if (!media) throw new Error("No media generated.");
 
-    const data = parseDataURL(media.url);
-    if (!data) throw new Error("Invalid data URL.");
+      const data = parseDataURL(media.url);
+      if (!data) throw new Error("Invalid data URL.");
 
-    // Convert the parsed data URL to a Uint8Array or Blob for Firebase Storage
-    const imageBytes = new Uint8Array(data.body); // Adjust if `data.body` format differs
-    const fileName = `${city.toLowerCase().replace(/\s/g, "-")}.png`;
+      // Convert the parsed data URL to a Uint8Array or Blob for Firebase Storage
+      const imageBytes = new Uint8Array(data.body); // Adjust if `data.body` format differs
+      const fileName = `${city.toLowerCase().replace(/\s/g, "-")}.png`;
 
-    return await uploadImageBuffer(imageBytes, fileName);
+      return await uploadImageBuffer(imageBytes, fileName);
+    }
   }
 );
