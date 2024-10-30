@@ -62,12 +62,13 @@ protectedRouter.post(
       city: destination,
     });
 
-    const media = await runFlow(tripImageGenerationFlow, response.city);
-
+    // const imageURL = await runFlow(tripImageGenerationFlow, response.city);
+    const imageURL =
+      "https://storage.googleapis.com/trip-mgmt-751d8.appspot.com/new-york.png";
     if (response?.message !== "FAILURE") {
       // Store the response in Firestore
       const documentId = await storeLLMResponse(
-        { ...response, imageURL: media },
+        { ...response, imageURL: imageURL },
         req.user?.uid
       );
       // Add the Firestore document ID to the response
