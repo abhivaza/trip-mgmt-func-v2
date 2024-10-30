@@ -24,6 +24,7 @@ export const storeLLMResponse = async (
     await docRef.set({
       ...llmResponse,
       timestamp: new Date(),
+      createdBy: userId,
       embedding: FieldValue.vector(embedding),
       itineraryText: JSON.stringify(llmResponse.itinerary),
     });
