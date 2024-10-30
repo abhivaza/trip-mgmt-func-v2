@@ -22,13 +22,8 @@ export const storeLLMResponse = async (
     });
 
     await docRef.set({
-      city: llmResponse.city,
-      country: llmResponse.country,
+      ...llmResponse,
       timestamp: new Date(),
-      popularityRank: llmResponse.popularityRank,
-      tags: llmResponse.tags,
-      itinerary: llmResponse.itinerary,
-      createdBy: userId,
       embedding: FieldValue.vector(embedding),
       itineraryText: JSON.stringify(llmResponse.itinerary),
     });

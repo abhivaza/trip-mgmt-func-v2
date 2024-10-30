@@ -5,7 +5,7 @@ const getBlobStorage = () => admin.storage();
 export const uploadImageBuffer = async (
   buffer: Uint8Array,
   destinationPath: string
-) => {
+): Promise<string> => {
   try {
     const bucket = getBlobStorage().bucket();
     const file = bucket.file(destinationPath);
@@ -17,8 +17,10 @@ export const uploadImageBuffer = async (
       },
     });
 
-    console.log(`Image buffer uploaded successfully to ${destinationPath}`);
+    file.makePublic();
+    return file.publicUrl();
   } catch (error) {
     console.error("Error uploading image buffer:", error);
+    throw error;
   }
 };

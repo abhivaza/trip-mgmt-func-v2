@@ -62,13 +62,14 @@ protectedRouter.post(
       city: destination,
     });
 
-    const media = await runFlow(tripImageGenerationFlow, "New York");
-
-    console.log(media);
+    const media = await runFlow(tripImageGenerationFlow, response.city);
 
     if (response?.message !== "FAILURE") {
       // Store the response in Firestore
-      const documentId = await storeLLMResponse(response, req.user?.uid);
+      const documentId = await storeLLMResponse(
+        { ...response, imageURL: media },
+        req.user?.uid
+      );
       // Add the Firestore document ID to the response
       res.send({
         ...response,

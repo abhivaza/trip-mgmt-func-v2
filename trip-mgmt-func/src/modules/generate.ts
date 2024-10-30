@@ -94,7 +94,6 @@ export const tripImageGenerationFlow = defineFlow(
     const imageBytes = new Uint8Array(data.body); // Adjust if `data.body` format differs
     const fileName = `${city.toLowerCase().replace(/\s/g, "-")}.png`;
 
-    await uploadImageBuffer(imageBytes, fileName);
-    console.log("Image uploaded successfully.");
+    return await uploadImageBuffer(imageBytes, fileName);
   }
 );
