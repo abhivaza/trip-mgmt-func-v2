@@ -3,7 +3,11 @@ import { verifyToken } from "../middleware/auth";
 import { AuthenticatedRequest } from "../type";
 
 import { runFlow } from "@genkit-ai/flow";
-import { tripGenerationFlow, tripSearchFlow } from "../modules/generate";
+import {
+  tripGenerationFlow,
+  tripImageGenerationFlow,
+  tripSearchFlow,
+} from "../modules/generate";
 import {
   getChatContext,
   getStoredItinerary,
@@ -57,6 +61,10 @@ protectedRouter.post(
     const response = await runFlow(tripGenerationFlow, {
       city: destination,
     });
+
+    const media = await runFlow(tripImageGenerationFlow, "New York");
+
+    console.log(media);
 
     if (response?.message !== "FAILURE") {
       // Store the response in Firestore

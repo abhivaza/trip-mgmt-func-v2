@@ -5,6 +5,7 @@ import { configureGenkit } from "@genkit-ai/core";
 import { firebase } from "@genkit-ai/firebase";
 import { googleAI } from "@genkit-ai/googleai";
 import { getFirebaseConfig } from "./config";
+import { vertexAI } from "@genkit-ai/vertexai";
 
 functions.onInit(() => {
   // initialize firebase
@@ -31,6 +32,10 @@ functions.onInit(() => {
       // the value from the GOOGLE_GENAI_API_KEY environment variable, which is
       // the recommended practice.
       googleAI({ apiKey: getFirebaseConfig().genAIConfig.googleAIApiKey }),
+      vertexAI({
+        projectId: getFirebaseConfig().serviceAccount.project_id,
+        location: "us-central1",
+      }),
     ],
     // Log debug output to tbe console.
     logLevel: "debug",

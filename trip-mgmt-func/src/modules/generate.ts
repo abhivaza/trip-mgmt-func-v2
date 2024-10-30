@@ -1,13 +1,17 @@
 import { generate } from "@genkit-ai/ai";
 import { gemini15Flash } from "@genkit-ai/googleai";
+import { imagen2 } from "@genkit-ai/vertexai";
+import parseDataURL from "data-urls";
 
 import { defineFlow } from "@genkit-ai/flow";
+
 import {
   TripDocument,
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
 } from "../type";
 import { z } from "zod";
+import { uploadImageBuffer } from "./storage";
 
 export const tripGenerationFlow = defineFlow(
   {
@@ -63,5 +67,34 @@ export const tripSearchFlow = defineFlow(
     });
 
     return llmResponse.text();
+  }
+);
+
+export const tripImageGenerationFlow = defineFlow(
+  {
+    name: "tripImageGenerationFlow",
+    inputSchema: z.string().describe("name of the city"),
+  },
+  async (city) => {
+    // Construct a request and send it to the model API.
+    const prompt = `A must-see iconic image for the city of ${city}.`;
+
+    const mediaResponse = await generate({
+      model: imagen2,
+      prompt: prompt,
+      output: { format: "media" },
+    });
+    const media = mediaResponse.media();
+    if (!media) throw new Error("No media generated.");
+
+    const data = parseDataURL(media.url);
+    if (!data) throw new Error("Invalid data URL.");
+
+    // Convert the parsed data URL to a Uint8Array or Blob for Firebase Storage
+    const imageBytes = new Uint8Array(data.body); // Adjust if `data.body` format differs
+    const fileName = `${city.toLowerCase().replace(/\s/g, "-")}.png`;
+
+    await uploadImageBuffer(imageBytes, fileName);
+    console.log("Image uploaded successfully.");
   }
 );
