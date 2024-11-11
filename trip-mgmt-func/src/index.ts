@@ -13,6 +13,7 @@ functions.onInit(() => {
     credential: admin.credential.cert(
       getFirebaseConfig().serviceAccount as admin.ServiceAccount
     ),
+    storageBucket: "trip-mgmt-751d8",
   });
 
   // Uncomment for running local DB
@@ -27,19 +28,13 @@ functions.onInit(() => {
   configureGenkit({
     plugins: [
       firebase(),
-      // Load the Google AI plugin. You can optionally specify your API key
-      // by passing in a config object; if you don't, the Google AI plugin uses
-      // the value from the GOOGLE_GENAI_API_KEY environment variable, which is
-      // the recommended practice.
       googleAI({ apiKey: getFirebaseConfig().genAIConfig.googleAIApiKey }),
       vertexAI({
         projectId: getFirebaseConfig().serviceAccount.project_id,
         location: "us-central1",
       }),
     ],
-    // Log debug output to tbe console.
     logLevel: "debug",
-    // Perform OpenTelemetry instrumentation and enable trace collection.
     enableTracingAndMetrics: true,
   });
 });
