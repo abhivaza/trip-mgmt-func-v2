@@ -6,6 +6,7 @@ import { firebase } from "@genkit-ai/firebase";
 import { googleAI } from "@genkit-ai/googleai";
 import { getFirebaseConfig } from "./config";
 import { vertexAI } from "@genkit-ai/vertexai";
+import { createUser } from "./modules/users";
 
 functions.onInit(() => {
   // initialize firebase
@@ -40,3 +41,6 @@ functions.onInit(() => {
 });
 
 export const api = functions.runWith({ memory: "512MB" }).https.onRequest(app);
+
+// user management
+export const createUserGoogle = createUser;
