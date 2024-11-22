@@ -1,12 +1,4 @@
-import { Request } from "express";
-import * as admin from "firebase-admin";
 import { z } from "zod";
-
-interface AuthenticatedRequest extends Request {
-  user?: admin.auth.DecodedIdToken;
-}
-
-export type { AuthenticatedRequest };
 
 export const tripGenerationInputSchema = z.object({
   city: z.string().describe("The name of the city."),

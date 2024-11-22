@@ -4,7 +4,7 @@ import protectedRouter from "./routes/protected";
 import publicRouter from "./routes/public";
 import { getAppConfig } from "./config";
 
-const app = express();
+const restApiApp = express();
 
 // CORS configuration
 const corsOptions: cors.CorsOptions = {
@@ -16,20 +16,22 @@ const corsOptions: cors.CorsOptions = {
 };
 
 // Middleware
-app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+restApiApp.use(cors(corsOptions));
+restApiApp.use(express.json());
+restApiApp.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/app", protectedRouter); // Auth routes under /api/auth
-app.use("/", publicRouter);
+restApiApp.use("/app", protectedRouter); // Auth routes under /api/auth
+restApiApp.use("/", publicRouter);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: "Internal server error",
-    message: "An unexpected error occurred",
-  });
-});
+restApiApp.use(
+  (err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({
+      error: "Internal server error",
+      message: "An unexpected error occurred",
+    });
+  }
+);
 
-export default app;
+export default restApiApp;

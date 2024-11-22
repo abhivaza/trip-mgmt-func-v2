@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import app from "./app";
+import restApiApp from "./app";
 import { configureGenkit } from "@genkit-ai/core";
 import { firebase } from "@genkit-ai/firebase";
 import { googleAI } from "@genkit-ai/googleai";
@@ -40,7 +40,13 @@ functions.onInit(() => {
   });
 });
 
-export const api = functions.runWith({ memory: "512MB" }).https.onRequest(app);
+// api functions
+export const api = functions
+  .runWith({ memory: "512MB" })
+  .https.onRequest(restApiApp);
 
-// user management
-export const createUserGoogle = createUser;
+// user managemnt functions
+export const userMgmt = functions
+  .runWith({ memory: "512MB" })
+  .auth.user()
+  .onCreate(createUser);

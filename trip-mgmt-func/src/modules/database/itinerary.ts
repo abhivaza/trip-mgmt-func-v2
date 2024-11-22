@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { TripDocument } from "../type";
+import { TripDocument } from "../../models/trip";
 import { embed } from "@genkit-ai/ai/embedder";
 import { textEmbeddingGecko001 } from "@genkit-ai/googleai";
 import { Document, retrieve } from "@genkit-ai/ai/retriever";
@@ -8,7 +8,7 @@ import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 
 const getDb = () => admin.firestore();
 
-export const storeLLMResponse = async (
+export const storeItineraryData = async (
   llmResponse: TripDocument,
   userId?: string
 ) => {
@@ -95,7 +95,7 @@ export const getUserItineraries = async (
   }
 };
 
-export const getFirestoreRetriever = () => {
+export const getItineraryRetriever = () => {
   return defineFirestoreRetriever({
     name: "trip-summary",
     firestore: getDb(),
@@ -110,7 +110,7 @@ export const getFirestoreRetriever = () => {
 export const getChatContext = async (subject: string): Promise<string> => {
   try {
     const docs = await retrieve({
-      retriever: getFirestoreRetriever(),
+      retriever: getItineraryRetriever(),
       query: subject,
       options: { limit: 3 },
     });

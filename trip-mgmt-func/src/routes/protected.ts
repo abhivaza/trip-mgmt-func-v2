@@ -1,19 +1,16 @@
 import { NextFunction, Router } from "express";
 import { verifyToken } from "../middleware/auth";
-import { AuthenticatedRequest } from "../type";
 
-import { runFlow } from "@genkit-ai/flow";
 import {
-  tripGenerationFlow,
-  tripImageGenerationFlow,
-  tripSearchFlow,
-} from "../modules/generate";
+  generateItinerary,
+  getAllItineraries,
+  getItineraryById,
+} from "../controller/itinerary-controller";
 import {
-  getChatContext,
-  getStoredItinerary,
-  getUserItineraries,
-  storeLLMResponse,
-} from "../modules/database";
+  getAllChatResponse,
+  getTripChatResponse,
+} from "../controller/chat-controller";
+import { AuthenticatedRequest } from "../models/common";
 
 const protectedRouter = Router();
 
@@ -22,17 +19,7 @@ protectedRouter.get(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  (req: AuthenticatedRequest, res, next: NextFunction) => {
-    const documentId = req.params.trip_id;
-    getStoredItinerary(documentId)
-      .then((itinerary) => {
-        res.send(itinerary);
-      })
-      .catch((error) => {
-        console.error("Error retrieving itinerary:", error);
-        next(error);
-      });
-  }
+  getItineraryById
 );
 
 protectedRouter.post(
@@ -40,15 +27,7 @@ protectedRouter.post(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  async (req: AuthenticatedRequest, res) => {
-    const { question } = req.body;
-    const document = await getStoredItinerary(req.params.trip_id);
-    if (document) {
-      const context = JSON.stringify(document);
-      const response = await runFlow(tripSearchFlow, { question, context });
-      res.send({ answer: response });
-    }
-  }
+  getTripChatResponse
 );
 
 protectedRouter.post(
@@ -56,30 +35,7 @@ protectedRouter.post(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  async (req: AuthenticatedRequest, res) => {
-    const { destination } = req.body;
-    const response = await runFlow(tripGenerationFlow, {
-      city: destination,
-    });
-
-    const imageURL =
-      response.city && (await runFlow(tripImageGenerationFlow, response.city));
-
-    if (response?.message !== "FAILURE") {
-      // Store the response in Firestore
-      const documentId = await storeLLMResponse(
-        { ...response, imageURL: imageURL },
-        req.user?.uid
-      );
-      // Add the Firestore document ID to the response
-      res.send({
-        ...response,
-        id: documentId,
-      });
-    } else {
-      res.send(response);
-    }
-  }
+  generateItinerary
 );
 
 protectedRouter.get(
@@ -87,16 +43,7 @@ protectedRouter.get(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    getUserItineraries(req.user?.uid || "")
-      .then((itinerary) => {
-        res.send(itinerary);
-      })
-      .catch((error) => {
-        console.error("Error retrieving itinerary:", error);
-        next(error);
-      });
-  }
+  getAllItineraries
 );
 
 protectedRouter.post(
@@ -104,12 +51,7 @@ protectedRouter.post(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  async (req: AuthenticatedRequest, res) => {
-    const { question } = req.body;
-    const context = await getChatContext(question);
-    const response = await runFlow(tripSearchFlow, { question, context });
-    res.send({ answer: response });
-  }
+  getAllChatResponse
 );
 
 export default protectedRouter;

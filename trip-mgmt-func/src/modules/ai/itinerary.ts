@@ -1,7 +1,5 @@
 import { generate } from "@genkit-ai/ai";
 import { gemini15Flash } from "@genkit-ai/googleai";
-import { imagen3 } from "@genkit-ai/vertexai";
-import parseDataURL from "data-urls";
 
 import { defineFlow } from "@genkit-ai/flow";
 
@@ -9,9 +7,8 @@ import {
   TripDocument,
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
-} from "../type";
+} from "../../models/trip";
 import { z } from "zod";
-import { uploadImageBuffer } from "./storage";
 
 export const tripGenerationFlow = defineFlow(
   {
@@ -67,34 +64,5 @@ export const tripSearchFlow = defineFlow(
     });
 
     return llmResponse.text();
-  }
-);
-
-export const tripImageGenerationFlow = defineFlow(
-  {
-    name: "tripImageGenerationFlow",
-    inputSchema: z.string().describe("name of the city"),
-  },
-  async (city) => {
-    // Construct a request and send it to the model API.
-    const prompt = `Limit the image size to 1MB. The image should be in JPEG format.
-      Give all these instructions, create an iconic image for the following city: ${city}.`;
-
-    const mediaResponse = await generate({
-      model: imagen3,
-      prompt: prompt,
-      output: { format: "media" },
-    });
-    const media = mediaResponse.media();
-    if (!media) throw new Error("No media generated.");
-
-    const data = parseDataURL(media.url);
-    if (!data) throw new Error("Invalid data URL.");
-
-    // Convert the parsed data URL to a Uint8Array or Blob for Firebase Storage
-    const imageBytes = new Uint8Array(data.body); // Adjust if `data.body` format differs
-    const fileName = `${city.toLowerCase().replace(/\s/g, "-")}-${Date.now()}.jpeg`;
-
-    return await uploadImageBuffer(imageBytes, fileName);
   }
 );

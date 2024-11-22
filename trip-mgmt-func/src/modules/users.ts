@@ -1,7 +1,7 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { UserRecord } from "firebase-admin/auth";
 
-export const createUser = functions.auth.user().onCreate(async (user) => {
+export const createUser = async (user: UserRecord) => {
   // Check if user signed in with Google
   const isGoogleProvider = user.providerData.some(
     (provider) => provider.providerId === "google.com"
@@ -18,19 +18,19 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
           displayName: user.displayName || "",
           photoURL: user.photoURL || "",
           providerData: user.providerData.map((provider) => ({
-            providerId: provider.providerId,
-            uid: provider.uid,
-            displayName: provider.displayName,
-            email: provider.email,
-            phoneNumber: provider.phoneNumber,
-            photoURL: provider.photoURL,
+            providerId: provider.providerId || "",
+            uid: provider.uid || "",
+            displayName: provider.displayName || "",
+            email: provider.email || "",
+            phoneNumber: provider.phoneNumber || "",
+            photoURL: provider.photoURL || "",
           })),
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           lastSignInTime: user.metadata.lastSignInTime || null,
           roles: ["user"],
           status: "active",
           profile: {
-            emailVerified: user.emailVerified,
+            emailVerified: user.emailVerified || "",
             firstName: user.displayName?.split(" ")[0] || "",
             lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
           },
@@ -47,4 +47,4 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
   }
 
   return null;
-});
+};
