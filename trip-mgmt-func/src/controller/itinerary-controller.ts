@@ -1,5 +1,6 @@
 import { NextFunction, Response } from "express";
 import {
+  getPublicItineraries,
   getStoredItinerary,
   getUserItineraries,
   storeItineraryData,
@@ -66,6 +67,21 @@ export const getAllItineraries = async (
   next: NextFunction
 ) => {
   getUserItineraries(req.user?.uid || "")
+    .then((itinerary) => {
+      res.send(itinerary);
+    })
+    .catch((error) => {
+      console.error("Error retrieving itinerary:", error);
+      next(error);
+    });
+};
+
+export const getAllPublicItineraries = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  getPublicItineraries()
     .then((itinerary) => {
       res.send(itinerary);
     })

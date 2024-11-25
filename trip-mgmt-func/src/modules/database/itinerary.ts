@@ -122,3 +122,24 @@ export const getChatContext = async (subject: string): Promise<string> => {
     throw error;
   }
 };
+
+export const getPublicItineraries = async (): Promise<
+  Array<TripDocument & { id: string }>
+> => {
+  try {
+    const db = getDb();
+    const snapshot = await db
+      .collection("trip-itineraries")
+      .where("isPublic", "==", true)
+      .orderBy("timestamp", "desc")
+      .get();
+
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...(doc.data() as TripDocument),
+    }));
+  } catch (error) {
+    console.error("Error retrieving user itineraries:", error);
+    throw error;
+  }
+};

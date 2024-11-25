@@ -1,8 +1,7 @@
 import { Router } from "express";
+import { getAllPublicItineraries } from "../controller/itinerary-controller";
 const publicRouter = Router();
 
-publicRouter.get("/hello", (req, res) => {
-  res.send("Hello from Firebase and Express!");
-});
+publicRouter.get("/trips", getAllPublicItineraries);
 
 export default publicRouter;

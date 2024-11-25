@@ -22,7 +22,7 @@ restApiApp.use(express.urlencoded({ extended: true }));
 
 // Routes
 restApiApp.use("/app", protectedRouter); // Auth routes under /api/auth
-restApiApp.use("/", publicRouter);
+restApiApp.use("/public", publicRouter);
 
 restApiApp.use(
   (err: Error, req: Request, res: Response, next: NextFunction) => {
