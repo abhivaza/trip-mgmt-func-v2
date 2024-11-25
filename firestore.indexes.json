@@ -22,10 +22,6 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "isPublic",
-          "order": "ASCENDING"
-        },
-        {
           "fieldPath": "timestamp",
           "order": "DESCENDING"
         }
@@ -41,6 +37,20 @@
             "dimension": 768,
             "flat": {}
           }
+        }
+      ]
+    },
+    {
+      "collectionGroup": "trip-itineraries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isPublic",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
         }
       ]
     }
