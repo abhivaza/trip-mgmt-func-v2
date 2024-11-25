@@ -38,7 +38,6 @@ export const createUser = async (user: UserRecord) => {
         { merge: true }
       );
 
-      console.log(`Google user document created for ${user.email}`);
       return null;
     } catch (error) {
       console.error("Error creating Google user document:", error);
