@@ -1,10 +1,16 @@
-import { generate } from "@genkit-ai/ai";
 import { defineFlow } from "@genkit-ai/flow";
 import { imagen3 } from "@genkit-ai/vertexai";
 import parseDataURL from "data-urls";
 import { imageGenerationInputSchema } from "../../models/image";
 import { uploadImageBuffer } from "../storage";
 import { storeImageData } from "../database/image";
+import { genkit } from "genkit";
+import { gemini20Flash, googleAI } from "@genkit-ai/googleai";
+
+const ai = genkit({
+  plugins: [googleAI()],
+  model: gemini20Flash,
+});
 
 export const tripImageGenerationFlow = defineFlow(
   {
@@ -17,12 +23,12 @@ export const tripImageGenerationFlow = defineFlow(
         Give all these instructions, and these tags: ${input.tags}, 
         create an image of random landmark of the following city: ${input.city}.`;
 
-    const mediaResponse = await generate({
+    const mediaResponse = await ai.generate({
       model: imagen3,
       prompt: prompt,
       output: { format: "media" },
     });
-    const media = mediaResponse.media();
+    const media = mediaResponse.media;
     if (!media) throw new Error("No media generated.");
 
     const data = parseDataURL(media.url);

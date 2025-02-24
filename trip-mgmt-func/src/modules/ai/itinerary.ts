@@ -1,14 +1,18 @@
-import { generate } from "@genkit-ai/ai";
-import { gemini15Flash } from "@genkit-ai/googleai";
-
+import { gemini20Flash, googleAI } from "@genkit-ai/googleai";
 import { defineFlow } from "@genkit-ai/flow";
+import { z } from "zod";
+import { genkit } from "genkit";
 
 import {
   TripDocument,
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
 } from "../../models/trip";
-import { z } from "zod";
+
+const ai = genkit({
+  plugins: [googleAI()],
+  model: gemini20Flash,
+});
 
 export const tripGenerationFlow = defineFlow(
   {
@@ -24,8 +28,7 @@ export const tripGenerationFlow = defineFlow(
       Give all these instructions, create a day by day itinerary for the city mentioned in the query.
       Query: ${subject.city}.`;
 
-    const llmResponse = await generate({
-      model: gemini15Flash,
+    const llmResponse = await ai.generate({
       prompt: prompt,
       output: { format: "json", schema: tripGenerationOutputSchema },
       config: {
@@ -33,7 +36,7 @@ export const tripGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output() as TripDocument;
+    return llmResponse.output as TripDocument;
   }
 );
 
@@ -55,14 +58,14 @@ export const tripSearchFlow = defineFlow(
       Query: ${subject.question}
       Helpful Answer:`;
 
-    const llmResponse = await generate({
-      model: gemini15Flash,
+    const llmResponse = await ai.generate({
+      model: gemini20Flash,
       prompt: prompt,
       config: {
         temperature: 1,
       },
     });
 
-    return llmResponse.text();
+    return llmResponse.output;
   }
 );

@@ -1,15 +1,16 @@
-import * as functions from "firebase-functions";
+import * as functionsV1 from "firebase-functions/v1";
+import * as functionsV2 from "firebase-functions/v2";
 import * as admin from "firebase-admin";
 import restApiApp from "./app";
-import { configureGenkit } from "@genkit-ai/core";
-import { firebase } from "@genkit-ai/firebase";
 import { googleAI } from "@genkit-ai/googleai";
 import { getFirebaseConfig } from "./config";
-import { vertexAI } from "@genkit-ai/vertexai";
+// import { vertexAI } from "@genkit-ai/vertexai";
 import { createUser } from "./modules/users";
+import { genkit } from "genkit";
 
-functions.onInit(() => {
+functionsV2.onInit(() => {
   // initialize firebase
+  // Comment for running local DB
   admin.initializeApp({
     credential: admin.credential.cert(
       getFirebaseConfig().serviceAccount as admin.ServiceAccount
@@ -26,27 +27,19 @@ functions.onInit(() => {
   // });
 
   // initialize genkit
-  configureGenkit({
+  genkit({
     plugins: [
-      firebase(),
-      googleAI({ apiKey: getFirebaseConfig().genAIConfig.googleAIApiKey }),
-      vertexAI({
-        projectId: getFirebaseConfig().serviceAccount.project_id,
-        location: "us-central1",
-      }),
+      googleAI(),
+      // vertexAI({
+      //   projectId: getFirebaseConfig().serviceAccount.project_id,
+      //   location: "us-central1",
+      // }),
     ],
-    logLevel: "debug",
-    enableTracingAndMetrics: true,
   });
 });
 
 // api functions
-export const api = functions
-  .runWith({ memory: "512MB" })
-  .https.onRequest(restApiApp);
+export const api = functionsV2.https.onRequest(restApiApp);
 
 // user managemnt functions
-export const userMgmt = functions
-  .runWith({ memory: "512MB" })
-  .auth.user()
-  .onCreate(createUser);
+export const userMgmt = functionsV1.auth.user().onCreate(createUser);

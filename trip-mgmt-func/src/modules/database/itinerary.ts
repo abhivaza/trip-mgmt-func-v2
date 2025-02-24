@@ -1,12 +1,20 @@
 import * as admin from "firebase-admin";
 import { TripDocument } from "../../models/trip";
-import { embed } from "@genkit-ai/ai/embedder";
-import { textEmbeddingGecko001 } from "@genkit-ai/googleai";
-import { Document, retrieve } from "@genkit-ai/ai/retriever";
-import { FieldValue } from "firebase-admin/firestore";
+import {
+  gemini20Flash,
+  googleAI,
+  textEmbeddingGecko001,
+} from "@genkit-ai/googleai";
+import { Document } from "@genkit-ai/ai/retriever";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
+import { genkit } from "genkit";
 
 const getDb = () => admin.firestore();
+
+const ai = genkit({
+  plugins: [googleAI()],
+  model: gemini20Flash, // set default model
+});
 
 export const storeItineraryData = async (
   llmResponse: TripDocument,
@@ -16,7 +24,7 @@ export const storeItineraryData = async (
     const db = getDb();
     const docRef = db.collection("trip-itineraries").doc();
 
-    const embedding = await embed({
+    const embedding = await ai.embed({
       embedder: textEmbeddingGecko001,
       content: Document.fromText(JSON.stringify(llmResponse.itinerary)),
     });
@@ -25,7 +33,7 @@ export const storeItineraryData = async (
       ...llmResponse,
       timestamp: new Date(),
       createdBy: userId,
-      embedding: FieldValue.vector(embedding),
+      embedding: embedding,
       itineraryText: JSON.stringify(llmResponse.itinerary),
     });
 
@@ -96,7 +104,7 @@ export const getUserItineraries = async (
 };
 
 export const getItineraryRetriever = () => {
-  return defineFirestoreRetriever({
+  return defineFirestoreRetriever(ai, {
     name: "trip-summary",
     firestore: getDb(),
     collection: "trip-itineraries",
@@ -109,7 +117,7 @@ export const getItineraryRetriever = () => {
 
 export const getChatContext = async (subject: string): Promise<string> => {
   try {
-    const docs = await retrieve({
+    const docs = await ai.retrieve({
       retriever: getItineraryRetriever(),
       query: subject,
       options: { limit: 3 },

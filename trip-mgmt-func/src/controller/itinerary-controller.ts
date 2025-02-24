@@ -7,7 +7,7 @@ import {
 } from "../modules/database/itinerary";
 import { runFlow } from "@genkit-ai/flow";
 import { tripGenerationFlow } from "../modules/ai/itinerary";
-import { tripImageGenerationFlow } from "../modules/ai/image";
+// import { tripImageGenerationFlow } from "../modules/ai/image";
 import { getImageContextDocument } from "../modules/database/image";
 import { AuthenticatedRequest } from "../models/common";
 
@@ -39,10 +39,10 @@ export const generateItinerary = async (
   const imageURL = await getImageContextDocument(response.city);
 
   if (imageURL) {
-    runFlow(tripImageGenerationFlow, {
-      city: response.city,
-      tags: response.tags.join(", "),
-    });
+    // runFlow(tripImageGenerationFlow, {
+    //   city: response.city,
+    //   tags: response.tags.join(", "),
+    // });
   }
 
   if (response?.message !== "FAILURE") {

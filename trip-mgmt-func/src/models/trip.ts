@@ -7,6 +7,8 @@ export const tripGenerationInputSchema = z.object({
 export const tripGenerationOutputSchema = z.object({
   message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   city: z.string().describe("The name of the city."),
+  fromDate: z.date().describe("Date one month from " + new Date()),
+  tripDuration: z.number().describe("The duration of the trip in days."),
   country: z.string().describe("The name of the country."),
   popularityRank: z
     .number()
@@ -16,7 +18,8 @@ export const tripGenerationOutputSchema = z.object({
     .describe("The trip's tags which can be used to filter results."),
   itinerary: z.array(
     z.object({
-      day: z.number().describe("The day number in the itinerary."),
+      dayNumber: z.number().describe("The day number in the itinerary."),
+      date: z.date().describe("The date of the day."),
       title: z.string().describe("The title of the day's activities."),
       description: z
         .string()

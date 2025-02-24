@@ -1,19 +1,27 @@
-import { embed } from "@genkit-ai/ai/embedder";
 import { ImageDocument } from "../../models/image";
 import * as admin from "firebase-admin";
-import { textEmbeddingGecko001 } from "@genkit-ai/googleai";
-import { Document, retrieve } from "@genkit-ai/ai/retriever";
-import { FieldValue } from "firebase-admin/firestore";
+import {
+  gemini20Flash,
+  googleAI,
+  textEmbeddingGecko001,
+} from "@genkit-ai/googleai";
+import { Document } from "@genkit-ai/ai/retriever";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
+import { genkit } from "genkit";
 
 const collectionName = "trip-images";
+
+const ai = genkit({
+  plugins: [googleAI()],
+  model: gemini20Flash, // set default model
+});
 
 export const storeImageData = async (llmResponse: ImageDocument) => {
   try {
     const db = admin.firestore();
     const docRef = db.collection(collectionName).doc();
 
-    const embedding = await embed({
+    const embedding = await ai.embed({
       embedder: textEmbeddingGecko001,
       content: Document.fromText(JSON.stringify({ city: llmResponse.city })),
     });
@@ -21,7 +29,7 @@ export const storeImageData = async (llmResponse: ImageDocument) => {
     await docRef.set({
       ...llmResponse,
       timestamp: new Date(),
-      embedding: FieldValue.vector(embedding),
+      embedding: embedding,
     });
 
     return docRef.id;
@@ -32,7 +40,7 @@ export const storeImageData = async (llmResponse: ImageDocument) => {
 };
 
 export const getImageRetriever = () => {
-  return defineFirestoreRetriever({
+  return defineFirestoreRetriever(ai, {
     name: "image-summary",
     firestore: admin.firestore(),
     collection: collectionName,
@@ -47,7 +55,7 @@ export const getImageContextDocument = async (
   subject: string
 ): Promise<string> => {
   try {
-    const docs = await retrieve({
+    const docs = await ai.retrieve({
       retriever: getImageRetriever(),
       query: subject,
       options: { limit: 1, minscore: 1 },
