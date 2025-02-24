@@ -25,6 +25,7 @@ restApiApp.use("/app", protectedRouter); // Auth routes under /api/auth
 restApiApp.use("/public", publicRouter);
 
 restApiApp.use(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).json({

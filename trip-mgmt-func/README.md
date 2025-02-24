@@ -29,3 +29,11 @@
 - run npx npm-check-updates -u 
 - run npm install
 ```
+
+**To deploy**
+
+Goto parent directory and run
+
+```bash 
+firebase deploy --only functions  
+```
