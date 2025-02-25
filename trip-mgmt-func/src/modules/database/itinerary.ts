@@ -1,19 +1,16 @@
 import * as admin from "firebase-admin";
 import { TripDocument } from "../../models/trip";
-import {
-  gemini20Flash,
-  googleAI,
-  textEmbeddingGecko001,
-} from "@genkit-ai/googleai";
+import { gemini20Flash, googleAI, textEmbedding004 } from "@genkit-ai/googleai";
 import { Document } from "@genkit-ai/ai/retriever";
-import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 import { genkit } from "genkit";
+import { defineFirestoreRetriever } from "@genkit-ai/firebase";
+import { FieldValue } from "firebase-admin/firestore";
 
 const getDb = () => admin.firestore();
 
 const ai = genkit({
   plugins: [googleAI()],
-  model: gemini20Flash, // set default model
+  model: gemini20Flash,
 });
 
 export const storeItineraryData = async (
@@ -24,16 +21,18 @@ export const storeItineraryData = async (
     const db = getDb();
     const docRef = db.collection("trip-itineraries").doc();
 
-    const embedding = await ai.embed({
-      embedder: textEmbeddingGecko001,
-      content: Document.fromText(JSON.stringify(llmResponse.itinerary)),
-    });
+    const embedding = (
+      await ai.embed({
+        embedder: textEmbedding004,
+        content: Document.fromText(JSON.stringify(llmResponse.itinerary)),
+      })
+    )[0].embedding;
 
     await docRef.set({
       ...llmResponse,
       timestamp: new Date(),
       createdBy: userId,
-      embedding: embedding,
+      embedding: FieldValue.vector(embedding),
       itineraryText: JSON.stringify(llmResponse.itinerary),
     });
 
@@ -110,8 +109,8 @@ export const getItineraryRetriever = () => {
     collection: "trip-itineraries",
     contentField: "itineraryText",
     vectorField: "embedding",
-    embedder: textEmbeddingGecko001, // Import from '@genkit-ai/googleai' or '@genkit-ai/vertexai'
-    distanceMeasure: "COSINE", // "EUCLIDEAN", "DOT_PRODUCT", or "COSINE" (default)
+    embedder: textEmbedding004,
+    distanceMeasure: "COSINE",
   });
 };
 

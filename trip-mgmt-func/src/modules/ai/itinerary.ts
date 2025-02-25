@@ -51,21 +51,20 @@ export const tripSearchFlow = defineFlow(
   },
   async (subject) => {
     // Construct a request and send it to the model API.
-    const prompt = `Use the following pieces of context to answer queries at the end.
+    const prompt = `Use the following pieces of context only to answer queries at the end.
       If you dont know the answer, just say that you dont know and don't try to make up an answer.
       Limit your answers to maximum 3 sentences.
-      ${subject.context}
-      Query: ${subject.question}
-      Helpful Answer:`;
+      Context: ${subject.context}.
+      Query: ${subject.question}.
+      `;
 
     const llmResponse = await ai.generate({
-      model: gemini20Flash,
       prompt: prompt,
       config: {
         temperature: 1,
       },
     });
 
-    return llmResponse.output;
+    return llmResponse.text as string;
   }
 );

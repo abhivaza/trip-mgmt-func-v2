@@ -1,13 +1,10 @@
 import { ImageDocument } from "../../models/image";
 import * as admin from "firebase-admin";
-import {
-  gemini20Flash,
-  googleAI,
-  textEmbeddingGecko001,
-} from "@genkit-ai/googleai";
+import { gemini20Flash, googleAI, textEmbedding004 } from "@genkit-ai/googleai";
 import { Document } from "@genkit-ai/ai/retriever";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 import { genkit } from "genkit";
+import { FieldValue } from "firebase-admin/firestore";
 
 const collectionName = "trip-images";
 
@@ -21,15 +18,17 @@ export const storeImageData = async (llmResponse: ImageDocument) => {
     const db = admin.firestore();
     const docRef = db.collection(collectionName).doc();
 
-    const embedding = await ai.embed({
-      embedder: textEmbeddingGecko001,
-      content: Document.fromText(JSON.stringify({ city: llmResponse.city })),
-    });
+    const embedding = (
+      await ai.embed({
+        embedder: textEmbedding004,
+        content: Document.fromText(JSON.stringify({ city: llmResponse.city })),
+      })
+    )[0].embedding;
 
     await docRef.set({
       ...llmResponse,
       timestamp: new Date(),
-      embedding: embedding,
+      embedding: FieldValue.vector(embedding),
     });
 
     return docRef.id;
@@ -46,7 +45,7 @@ export const getImageRetriever = () => {
     collection: collectionName,
     contentField: "city",
     vectorField: "embedding",
-    embedder: textEmbeddingGecko001,
+    embedder: textEmbedding004,
     distanceMeasure: "COSINE",
   });
 };
