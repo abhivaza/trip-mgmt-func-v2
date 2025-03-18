@@ -16,18 +16,18 @@
 
 ```bash
 - npm run build
-- run firebase emulators:start
+- firebase emulators:start --only functions
 ```
 
 **To udpdate project packages**
 
 ```bash
-- run npm outdated
+- npm outdated
 # this will update to all miror versions
-- run npm update
+- npm update
 # this will update to all major versions
-- run npx npm-check-updates -u 
-- run npm install
+- npx npm-check-updates -u 
+- npm install
 ```
 
 **To deploy**
