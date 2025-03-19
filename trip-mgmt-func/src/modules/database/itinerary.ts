@@ -4,7 +4,7 @@ import { gemini20Flash, googleAI, textEmbedding004 } from "@genkit-ai/googleai";
 import { Document } from "@genkit-ai/ai/retriever";
 import { genkit } from "genkit";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Filter } from "firebase-admin/firestore";
 
 const getDb = () => admin.firestore();
 
@@ -107,7 +107,12 @@ export const getDBItinerariesForUser = async (
     const db = getDb();
     const snapshot = await db
       .collection("trip-itineraries")
-      .where("createdBy", "==", userId)
+      .where(
+        Filter.or(
+          Filter.where("createdBy", "==", userId),
+          Filter.where("sharedWith", "array-contains", userId)
+        )
+      )
       .orderBy("timestamp", "desc")
       .get();
 

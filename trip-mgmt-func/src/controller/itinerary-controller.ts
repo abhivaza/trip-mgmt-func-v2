@@ -50,7 +50,7 @@ export const generateItinerary = async (
     // Store the response in Firestore
     const documentId = await setDBItineraryData(
       { ...response, imageURL: imageURL ?? "" },
-      req.user?.uid
+      req.user?.email
     );
     // Add the Firestore document ID to the response
     res.send({
@@ -67,7 +67,7 @@ export const getAllItineraries = async (
   res: Response,
   next: NextFunction
 ) => {
-  getDBItinerariesForUser(req.user?.uid || "")
+  getDBItinerariesForUser(req.user?.email || "")
     .then((itinerary) => {
       res.send(itinerary);
     })
@@ -98,7 +98,7 @@ export const shareItinerary = async (
   next: NextFunction
 ) => {
   const tripId = req.params.trip_id;
-  const { friendEmail: email } = req.body;
+  const { email } = req.body;
 
   if (!email) {
     return res.status(400).send({ error: "email is required" });
@@ -109,7 +109,7 @@ export const shareItinerary = async (
     const itinerary = await getDBItinerary(tripId);
 
     // Check if the current user owns this itinerary
-    if (itinerary?.createdBy !== req.user?.uid) {
+    if (itinerary?.createdBy !== req.user?.email) {
       return res
         .status(403)
         .send({ error: "You don't have permission to share this trip" });

@@ -1,13 +1,10 @@
 import { runFlow } from "@genkit-ai/flow";
-import {
-  getChatContext,
-  getDBItinerary,
-} from "../modules/database/itinerary";
+import { getChatContext, getDBItinerary } from "../modules/database/itinerary";
 import { tripSearchFlow } from "../modules/ai/itinerary";
 import { Response } from "express";
 import { AuthenticatedRequest } from "../models/common";
 
-export const getTripChatResponse = async (
+export const getItineraryChatResponse = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
@@ -20,7 +17,7 @@ export const getTripChatResponse = async (
   }
 };
 
-export const getAllChatResponse = async (
+export const getAllItineraryChatResponse = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {

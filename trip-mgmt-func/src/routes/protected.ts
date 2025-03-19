@@ -5,10 +5,11 @@ import {
   generateItinerary,
   getAllItineraries,
   getItineraryById,
+  shareItinerary,
 } from "../controller/itinerary-controller";
 import {
-  getAllChatResponse,
-  getTripChatResponse,
+  getAllItineraryChatResponse,
+  getItineraryChatResponse,
 } from "../controller/chat-controller";
 import { AuthenticatedRequest } from "../models/common";
 
@@ -27,7 +28,15 @@ protectedRouter.post(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  getTripChatResponse
+  getItineraryChatResponse
+);
+
+protectedRouter.post(
+  "/trip/:trip_id/share",
+  async (req: AuthenticatedRequest, res, next: NextFunction) => {
+    await verifyToken(req, res, next);
+  },
+  shareItinerary
 );
 
 protectedRouter.post(
@@ -51,7 +60,7 @@ protectedRouter.post(
   async (req: AuthenticatedRequest, res, next: NextFunction) => {
     await verifyToken(req, res, next);
   },
-  getAllChatResponse
+  getAllItineraryChatResponse
 );
 
 export default protectedRouter;

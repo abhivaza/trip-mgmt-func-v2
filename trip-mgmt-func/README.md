@@ -15,8 +15,7 @@
 **Run locallcy with changes**
 
 ```bash
-- npm run build
-- firebase emulators:start --only functions
+- npm run serve
 ```
 
 **To udpdate project packages**
