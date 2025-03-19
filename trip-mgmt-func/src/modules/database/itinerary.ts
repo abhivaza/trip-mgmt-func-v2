@@ -13,7 +13,7 @@ const ai = genkit({
   model: gemini20Flash,
 });
 
-export const storeItineraryData = async (
+export const setDBItineraryData = async (
   llmResponse: TripDocument,
   userId?: string
 ) => {
@@ -43,23 +43,42 @@ export const storeItineraryData = async (
   }
 };
 
-export const getStoredItinerary = async (
+export const getDBItinerary = async (
   documentId: string
-): Promise<admin.firestore.DocumentData | null> => {
+): Promise<TripDocument | null> => {
   try {
     const db = getDb();
     const doc = await db.collection("trip-itineraries").doc(documentId).get();
     if (!doc.exists) {
       throw new Error("Itinerary not found");
     }
-    return doc.data() || null;
+    return (doc.data() as TripDocument) || null;
   } catch (error) {
     console.error("Error retrieving itinerary:", error);
     throw error;
   }
 };
 
-export const queryItinerariesByCity = async (
+export const shareDBItinerary = async (
+  documentId: string,
+  email: string
+): Promise<void> => {
+  try {
+    const db = getDb();
+    const docRef = db.collection("trip-itineraries").doc(documentId);
+
+    await docRef.update({
+      sharedWith: FieldValue.arrayUnion(email),
+    });
+
+    return;
+  } catch (error) {
+    console.error("Error sharing itinerary:", error);
+    throw error;
+  }
+};
+
+export const getDBItinerariesByCity = async (
   city: string
 ): Promise<Array<TripDocument & { id: string }>> => {
   try {
@@ -81,7 +100,7 @@ export const queryItinerariesByCity = async (
   }
 };
 
-export const getUserItineraries = async (
+export const getDBItinerariesForUser = async (
   userId: string
 ): Promise<Array<TripDocument & { id: string }>> => {
   try {

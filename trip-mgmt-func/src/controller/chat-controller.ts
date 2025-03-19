@@ -1,7 +1,7 @@
 import { runFlow } from "@genkit-ai/flow";
 import {
   getChatContext,
-  getStoredItinerary,
+  getDBItinerary,
 } from "../modules/database/itinerary";
 import { tripSearchFlow } from "../modules/ai/itinerary";
 import { Response } from "express";
@@ -12,7 +12,7 @@ export const getTripChatResponse = async (
   res: Response
 ) => {
   const { question } = req.body;
-  const document = await getStoredItinerary(req.params.trip_id);
+  const document = await getDBItinerary(req.params.trip_id);
   if (document) {
     const context = JSON.stringify(document);
     const response = await runFlow(tripSearchFlow, { question, context });

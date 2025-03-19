@@ -34,4 +34,7 @@ export const tripGenerationOutputSchema = z.object({
   imageURL: z.string().describe("empty field."),
 });
 
-export type TripDocument = z.infer<typeof tripGenerationOutputSchema>;
+export type TripDocument = z.infer<typeof tripGenerationOutputSchema> & {
+  createdBy?: string;
+  sharedWith?: string[];
+};
