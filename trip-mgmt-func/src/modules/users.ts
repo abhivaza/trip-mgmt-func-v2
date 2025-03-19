@@ -2,48 +2,39 @@ import * as admin from "firebase-admin";
 import { UserRecord } from "firebase-admin/auth";
 
 export const createUser = async (user: UserRecord) => {
-  // Check if user signed in with Google
-  const isGoogleProvider = user.providerData.some(
-    (provider) => provider.providerId === "google.com"
-  );
+  try {
+    const userDocRef = admin.firestore().collection("users").doc(user.uid);
 
-  if (isGoogleProvider) {
-    try {
-      const userDocRef = admin.firestore().collection("users").doc(user.uid);
+    const providerInfo = user.providerData.map((provider) => ({
+      providerId: provider.providerId,
+      email: provider.email || "",
+      displayName: provider.displayName || "",
+      photoURL: provider.photoURL || "",
+      phoneNumber: provider.phoneNumber || "",
+    }));
 
-      await userDocRef.set(
-        {
-          uid: user.uid,
-          email: user.email || "",
-          displayName: user.displayName || "",
-          photoURL: user.photoURL || "",
-          providerData: user.providerData.map((provider) => ({
-            providerId: provider.providerId || "",
-            uid: provider.uid || "",
-            displayName: provider.displayName || "",
-            email: provider.email || "",
-            phoneNumber: provider.phoneNumber || "",
-            photoURL: provider.photoURL || "",
-          })),
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
-          lastSignInTime: user.metadata.lastSignInTime || null,
-          roles: ["user"],
-          status: "active",
-          profile: {
-            emailVerified: user.emailVerified || "",
-            firstName: user.displayName?.split(" ")[0] || "",
-            lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
-          },
+    await userDocRef.set(
+      {
+        uid: user.uid,
+        email: user.email || "",
+        displayName: user.displayName || "",
+        photoURL: user.photoURL || "",
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        lastSignInTime: user.metadata.lastSignInTime || null,
+        status: "active",
+        profile: {
+          emailVerified: user.emailVerified || false,
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
         },
-        { merge: true }
-      );
+        providers: providerInfo,
+      },
+      { merge: true }
+    );
 
-      return null;
-    } catch (error) {
-      console.error("Error creating Google user document:", error);
-      return null;
-    }
+    return null;
+  } catch (error) {
+    console.error("Error creating user document:", error);
+    return null;
   }
-
-  return null;
 };
