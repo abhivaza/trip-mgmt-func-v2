@@ -5,8 +5,9 @@ import { Document } from "@genkit-ai/ai/retriever";
 import { genkit } from "genkit";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 import { FieldValue, Filter } from "firebase-admin/firestore";
+import { getDBUser, signupUser } from "./users";
 
-const getDb = () => admin.firestore();
+const collectionName = "trip-itineraries";
 
 const ai = genkit({
   plugins: [googleAI()],
@@ -18,8 +19,8 @@ export const setDBItineraryData = async (
   userId?: string
 ) => {
   try {
-    const db = getDb();
-    const docRef = db.collection("trip-itineraries").doc();
+    const db = admin.firestore();
+    const docRef = db.collection(collectionName).doc();
 
     const embedding = (
       await ai.embed({
@@ -47,8 +48,8 @@ export const getDBItinerary = async (
   documentId: string
 ): Promise<TripDocument | null> => {
   try {
-    const db = getDb();
-    const doc = await db.collection("trip-itineraries").doc(documentId).get();
+    const db = admin.firestore();
+    const doc = await db.collection(collectionName).doc(documentId).get();
     if (!doc.exists) {
       throw new Error("Itinerary not found");
     }
@@ -64,12 +65,17 @@ export const shareDBItinerary = async (
   email: string
 ): Promise<void> => {
   try {
-    const db = getDb();
-    const docRef = db.collection("trip-itineraries").doc(documentId);
+    const db = admin.firestore();
+    const docRef = db.collection(collectionName).doc(documentId);
 
     await docRef.update({
       sharedWith: FieldValue.arrayUnion(email),
     });
+
+    const user = await getDBUser(email);
+    if (!user) {
+      await signupUser(email);
+    }
 
     return;
   } catch (error) {
@@ -82,9 +88,9 @@ export const getDBItinerariesByCity = async (
   city: string
 ): Promise<Array<TripDocument & { id: string }>> => {
   try {
-    const db = getDb();
+    const db = admin.firestore();
     const snapshot = await db
-      .collection("trip-itineraries")
+      .collection(collectionName)
       .where("city", "==", city)
       .orderBy("timestamp", "desc")
       .limit(10)
@@ -104,9 +110,9 @@ export const getDBItinerariesForUser = async (
   userId: string
 ): Promise<Array<TripDocument & { id: string }>> => {
   try {
-    const db = getDb();
+    const db = admin.firestore();
     const snapshot = await db
-      .collection("trip-itineraries")
+      .collection(collectionName)
       .where(
         Filter.or(
           Filter.where("createdBy", "==", userId),
@@ -129,8 +135,8 @@ export const getDBItinerariesForUser = async (
 export const getItineraryRetriever = () => {
   return defineFirestoreRetriever(ai, {
     name: "trip-summary",
-    firestore: getDb(),
-    collection: "trip-itineraries",
+    firestore: admin.firestore(),
+    collection: collectionName,
     contentField: "itineraryText",
     vectorField: "embedding",
     embedder: textEmbedding004,
@@ -158,9 +164,9 @@ export const getPublicItineraries = async (): Promise<
   Array<TripDocument & { id: string }>
 > => {
   try {
-    const db = getDb();
+    const db = admin.firestore();
     const snapshot = await db
-      .collection("trip-itineraries")
+      .collection(collectionName)
       .where("isPublic", "==", true)
       .orderBy("timestamp", "desc")
       .get();
