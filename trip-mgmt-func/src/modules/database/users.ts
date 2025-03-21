@@ -3,11 +3,6 @@ import * as crypto from "crypto";
 
 const collectionName = "users";
 
-const actionCodeSettings = {
-  url: "https://tripminder.be", // The URL to redirect to after sign-in.
-  handleCodeInApp: true,
-};
-
 export const getDBUser = async (email: string) => {
   try {
     const db = admin.firestore();
