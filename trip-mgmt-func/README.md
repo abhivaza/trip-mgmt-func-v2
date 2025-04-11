@@ -3,7 +3,9 @@
 **Setup**
 
 ```bash
+- npm install
 - run npm install -g firebase-tools
+- cp example.env .env
 ```
 
 **Prepare to run project locally**
