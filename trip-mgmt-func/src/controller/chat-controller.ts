@@ -2,7 +2,7 @@ import { runFlow } from "@genkit-ai/flow";
 import { getChatContext, getDBItinerary } from "../modules/database/itinerary";
 import { tripSearchFlow } from "../modules/ai/itinerary";
 import { Response } from "express";
-import { AuthenticatedRequest } from "../models/common";
+import { AuthenticatedRequest } from "../types/common";
 
 export const getItineraryChatResponse = async (
   req: AuthenticatedRequest,

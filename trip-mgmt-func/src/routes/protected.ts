@@ -1,4 +1,4 @@
-import { NextFunction, Router } from "express";
+import { Router } from "express";
 import { verifyToken } from "../middleware/auth";
 
 import {
@@ -11,56 +11,41 @@ import {
   getAllItineraryChatResponse,
   getItineraryChatResponse,
 } from "../controller/chat-controller";
-import { AuthenticatedRequest } from "../models/common";
+import {
+  createItinerarySection,
+  deleteItinerarySection,
+  generateItinerarySection,
+  updateItinerarySection,
+} from "../controller/itinerary-section-controller";
 
 const protectedRouter = Router();
 
-protectedRouter.get(
-  "/trip/:trip_id",
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    await verifyToken(req, res, next);
-  },
-  getItineraryById
-);
+// Middleware
+protectedRouter.use(verifyToken);
 
+// All trip routes
+protectedRouter.get("/trips", getAllItineraries);
+protectedRouter.post("/trips/chat", getAllItineraryChatResponse);
+
+// Trip routes
+protectedRouter.post("/trip/generate", generateItinerary);
+protectedRouter.get("/trip/:trip_id", getItineraryById);
+protectedRouter.post("/trip/:trip_id/chat", getItineraryChatResponse);
+protectedRouter.post("/trip/:trip_id/share", shareItinerary);
+
+// Trip section routes
 protectedRouter.post(
-  "/trip/:trip_id/chat",
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    await verifyToken(req, res, next);
-  },
-  getItineraryChatResponse
+  "/trip/:trip_id/section/generate",
+  generateItinerarySection
 );
-
-protectedRouter.post(
-  "/trip/:trip_id/share",
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    await verifyToken(req, res, next);
-  },
-  shareItinerary
+protectedRouter.post("/trip/:trip_id/section", createItinerarySection);
+protectedRouter.put(
+  "/trip/:trip_id/section/:section_id",
+  updateItinerarySection
 );
-
-protectedRouter.post(
-  "/trip/generate",
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    await verifyToken(req, res, next);
-  },
-  generateItinerary
-);
-
-protectedRouter.get(
-  "/trips",
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    await verifyToken(req, res, next);
-  },
-  getAllItineraries
-);
-
-protectedRouter.post(
-  "/trips/chat",
-  async (req: AuthenticatedRequest, res, next: NextFunction) => {
-    await verifyToken(req, res, next);
-  },
-  getAllItineraryChatResponse
+protectedRouter.delete(
+  "/trip/:trip_id/section/:section_id",
+  deleteItinerarySection
 );
 
 export default protectedRouter;

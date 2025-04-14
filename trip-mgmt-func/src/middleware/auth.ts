@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import * as admin from "firebase-admin";
-import { AuthenticatedRequest } from "../models/common";
+import { AuthenticatedRequest } from "../types/common";
 
 // Token extraction helper
 const extractToken = (req: AuthenticatedRequest): string | null => {

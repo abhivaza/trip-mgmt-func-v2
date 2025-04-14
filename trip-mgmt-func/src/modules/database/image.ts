@@ -1,4 +1,4 @@
-import { ImageDocument } from "../../models/image";
+import { ImageDocument } from "../../types/image";
 import * as admin from "firebase-admin";
 import { gemini20Flash, googleAI, textEmbedding004 } from "@genkit-ai/googleai";
 import { Document } from "@genkit-ai/ai/retriever";

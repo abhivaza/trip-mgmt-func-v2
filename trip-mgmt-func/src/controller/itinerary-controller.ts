@@ -10,7 +10,7 @@ import { runFlow } from "@genkit-ai/flow";
 import { tripGenerationFlow } from "../modules/ai/itinerary";
 // import { tripImageGenerationFlow } from "../modules/ai/image";
 import { getImageContextDocument } from "../modules/database/image";
-import { AuthenticatedRequest } from "../models/common";
+import { AuthenticatedRequest } from "../types/common";
 
 export const getItineraryById = async (
   req: AuthenticatedRequest,

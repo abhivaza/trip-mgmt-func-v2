@@ -11,20 +11,20 @@
 **Prepare to run project locally**
 
 ```bash
-- Uncomment local chunk of code to run DB in intex.ts
+- Uncomment local chunk of code to run DB in index.ts
 ```
 
-**Run locallcy with changes**
+**Run locally with changes**
 
 ```bash
 - npm run serve
 ```
 
-**To udpdate project packages**
+**To update project packages**
 
 ```bash
 - npm outdated
-# this will update to all miror versions
+# this will update to all minor versions
 - npm update
 # this will update to all major versions
 - npx npm-check-updates -u 

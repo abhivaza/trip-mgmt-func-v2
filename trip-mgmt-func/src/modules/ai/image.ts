@@ -1,7 +1,7 @@
 import { defineFlow } from "@genkit-ai/flow";
 import { imagen3 } from "@genkit-ai/vertexai";
 import parseDataURL from "data-urls";
-import { imageGenerationInputSchema } from "../../models/image";
+import { imageGenerationInputSchema } from "../../types/image";
 import { uploadImageBuffer } from "../storage";
 import { storeImageData } from "../database/image";
 import { genkit } from "genkit";
