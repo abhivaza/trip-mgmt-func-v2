@@ -8,7 +8,10 @@ import {
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
 } from "../../types/trip";
-import { tripSectionGenerationInputSchema } from "../../types/trip-section";
+import tripSectionGenerationOutputSchema, {
+  TripSectionDocument,
+  tripSectionGenerationInputSchema,
+} from "../../types/trip-section";
 
 const ai = genkit({
   plugins: [googleAI()],
@@ -45,22 +48,24 @@ export const tripSectionGenerationFlow = defineFlow(
   {
     name: "tripSectionGenerationFlow",
     inputSchema: tripSectionGenerationInputSchema,
-    outputSchema: z.string().describe("the search result"),
+    outputSchema: tripSectionGenerationOutputSchema,
   },
   async (subject) => {
     const prompt = `You are acting as travel advisor.
-      Create a plan for asked activity in given city.
+      Create a plan for asked activity in given city. Give maximum 3 options.
+      Output is in JSON format, do not use double quotes in JSON field value.
       City: ${subject.city}.
       Activity: ${subject.activity}.`;
 
     const llmResponse = await ai.generate({
       prompt: prompt,
+      output: { format: "json", schema: tripSectionGenerationOutputSchema },
       config: {
         temperature: 1,
       },
     });
 
-    return llmResponse.text as string;
+    return llmResponse.output as TripSectionDocument;
   }
 );
 

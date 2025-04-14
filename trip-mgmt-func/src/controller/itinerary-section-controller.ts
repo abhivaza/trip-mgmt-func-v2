@@ -33,7 +33,7 @@ export const generateItinerarySection = async (
       city: document.city,
       content: JSON.stringify(document.itinerary),
     });
-    res.send({ data: response });
+    res.send(response);
   }
 };
 
