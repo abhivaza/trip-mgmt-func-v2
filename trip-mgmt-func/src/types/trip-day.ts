@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const itinerarySchema = z.object({
+export const itineraryDaySchema = z.object({
   dayNumber: z.number().describe("The day number in the itinerary."),
   date: z.date().describe("The date of the day."),
   place: z.string().describe("The name of the place visiting for the day."),
@@ -23,4 +23,4 @@ export const tripDayItineraryGenerationInputSchema = z.object({
     .describe("The special request of the user."),
 });
 
-export type TripDayItineraryDocument = z.infer<typeof itinerarySchema>;
+export type TripDayItineraryDocument = z.infer<typeof itineraryDaySchema>;

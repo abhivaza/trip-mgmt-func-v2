@@ -14,7 +14,7 @@ import {
   tripSectionGenerationOutputSchema,
 } from "../../types/trip-section";
 import {
-  itinerarySchema,
+  itineraryDaySchema,
   TripDayItineraryDocument,
   tripDayItineraryGenerationInputSchema,
 } from "../../types/trip-day";
@@ -56,7 +56,7 @@ export const tripDayItineraryGenerationFlow = defineFlow(
   {
     name: "tripDayItineraryGenerationFlow",
     inputSchema: tripDayItineraryGenerationInputSchema,
-    outputSchema: itinerarySchema,
+    outputSchema: itineraryDaySchema,
   },
   async (subject) => {
     const prompt = `You are acting as travel advisor.
@@ -71,7 +71,7 @@ export const tripDayItineraryGenerationFlow = defineFlow(
       prompt: prompt,
       output: {
         format: "json",
-        schema: itinerarySchema,
+        schema: itineraryDaySchema,
       },
       config: {
         temperature: 1,

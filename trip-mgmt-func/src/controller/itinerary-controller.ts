@@ -5,6 +5,7 @@ import {
   getDBItinerariesForUser,
   setDBItineraryData,
   shareDBItinerary,
+  updateDBItineraryData,
 } from "../modules/database/itinerary";
 import { runFlow } from "@genkit-ai/flow";
 import { tripGenerationFlow } from "../modules/ai/itinerary";
@@ -12,7 +13,7 @@ import { tripGenerationFlow } from "../modules/ai/itinerary";
 import { getImageContextDocument } from "../modules/database/image";
 import { AuthenticatedRequest } from "../types/common";
 
-export const getItineraryById = async (
+export const getItinerary = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -26,6 +27,25 @@ export const getItineraryById = async (
       console.error("Error retrieving itinerary:", error);
       next(error);
     });
+};
+
+export const updateItinerary = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const tripId = req.params.trip_id;
+
+  try {
+    updateDBItineraryData(tripId, req.body, req.user?.email);
+    return res.status(200).send({
+      success: true,
+      message: "Trip successfully updated",
+    });
+  } catch (error) {
+    console.error("Error updating itinerary:", error);
+    return next(error);
+  }
 };
 
 export const generateItinerary = async (

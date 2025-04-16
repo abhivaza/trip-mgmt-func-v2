@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { TripSectionDocument } from "./trip-section";
-import { itinerarySchema } from "./trip-day";
+import { itineraryDaySchema } from "./trip-day";
 
 export const tripGenerationInputSchema = z.object({
   city: z.string().describe("The name of the city."),
@@ -18,7 +18,7 @@ export const tripGenerationOutputSchema = z.object({
   tags: z
     .array(z.string())
     .describe("The trip's tags which can be used to filter results."),
-  itinerary: z.array(itinerarySchema).describe("The day by day itinerary."),
+  itinerary: z.array(itineraryDaySchema).describe("The day by day itinerary."),
   imageURL: z.string().describe("empty field."),
 });
 

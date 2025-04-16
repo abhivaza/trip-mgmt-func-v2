@@ -4,8 +4,9 @@ import { verifyToken } from "../middleware/auth";
 import {
   generateItinerary,
   getAllItineraries,
-  getItineraryById,
+  getItinerary,
   shareItinerary,
+  updateItinerary,
 } from "../controller/itinerary-controller";
 import {
   getAllItineraryChatResponse,
@@ -30,7 +31,8 @@ protectedRouter.post("/trips/chat", getAllItineraryChatResponse);
 
 // Trip routes
 protectedRouter.post("/trip/generate", generateItinerary);
-protectedRouter.get("/trip/:trip_id", getItineraryById);
+protectedRouter.get("/trip/:trip_id", getItinerary);
+protectedRouter.put("/trip/:trip_id", updateItinerary);
 protectedRouter.post("/trip/:trip_id/chat", getItineraryChatResponse);
 protectedRouter.post("/trip/:trip_id/share", shareItinerary);
 
