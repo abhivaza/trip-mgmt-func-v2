@@ -36,5 +36,5 @@
 Goto parent directory and run
 
 ```bash 
-firebase deploy --only functions  
+firebase deploy --only functions
 ```

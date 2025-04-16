@@ -44,6 +44,45 @@ export const setDBItineraryData = async (
   }
 };
 
+export const updateDBItineraryData = async (
+  docId: string,
+  updatedData: Partial<TripDocument>,
+  userId?: string
+) => {
+  try {
+    const db = admin.firestore();
+    const docRef = db.collection(collectionName).doc(docId);
+
+    // Get any new embedding if the itinerary was updated
+    let embeddingUpdate = {};
+    if (updatedData.itinerary) {
+      const embedding = (
+        await ai.embed({
+          embedder: textEmbedding004,
+          content: Document.fromText(JSON.stringify(updatedData.itinerary)),
+        })
+      )[0].embedding;
+
+      embeddingUpdate = {
+        embedding: FieldValue.vector(embedding),
+        itineraryText: JSON.stringify(updatedData.itinerary),
+      };
+    }
+
+    await docRef.update({
+      ...updatedData,
+      lastUpdated: new Date(),
+      updatedBy: userId || null,
+      ...embeddingUpdate,
+    });
+
+    return docId;
+  } catch (error) {
+    console.error("Error updating itinerary data:", error);
+    throw error;
+  }
+};
+
 export const getDBItinerary = async (
   documentId: string
 ): Promise<TripDocument | null> => {

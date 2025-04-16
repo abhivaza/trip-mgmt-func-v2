@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { TripSectionDocument } from "./trip-section";
+import { itinerarySchema } from "./trip-day";
 
 export const tripGenerationInputSchema = z.object({
   city: z.string().describe("The name of the city."),
@@ -16,25 +18,12 @@ export const tripGenerationOutputSchema = z.object({
   tags: z
     .array(z.string())
     .describe("The trip's tags which can be used to filter results."),
-  itinerary: z.array(
-    z.object({
-      dayNumber: z.number().describe("The day number in the itinerary."),
-      date: z.date().describe("The date of the day."),
-      title: z.string().describe("The title of the day's activities."),
-      description: z
-        .string()
-        .describe("A brief description of the day's overall plan."),
-      activities: z
-        .array(z.string())
-        .describe(
-          "Recommended things to do around or at the given city during the day."
-        ),
-    })
-  ),
+  itinerary: z.array(itinerarySchema).describe("The day by day itinerary."),
   imageURL: z.string().describe("empty field."),
 });
 
 export type TripDocument = z.infer<typeof tripGenerationOutputSchema> & {
   createdBy?: string;
   sharedWith?: string[];
+  tripSections?: TripSectionDocument[];
 };

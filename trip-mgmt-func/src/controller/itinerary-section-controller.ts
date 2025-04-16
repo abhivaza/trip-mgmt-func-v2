@@ -25,13 +25,14 @@ export const generateItinerarySection = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { activity } = req.body;
+  const { place, activity, specialRequest } = req.body;
   const document = await getDBItinerary(req.params.trip_id);
   if (document) {
     const response = await runFlow(tripSectionGenerationFlow, {
       activity,
-      city: document.city,
+      place,
       content: JSON.stringify(document.itinerary),
+      specialRequest,
     });
     res.send(response);
   }
