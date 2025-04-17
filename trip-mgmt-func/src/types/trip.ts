@@ -9,7 +9,11 @@ export const tripGenerationInputSchema = z.object({
 export const tripGenerationOutputSchema = z.object({
   message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   city: z.string().describe("The name of the city."),
-  fromDate: z.date().describe("Date one month from " + new Date()),
+  fromDate: z
+    .date()
+    .describe(
+      "User specified trip start date. If not specified, default date is one month from today."
+    ),
   tripDuration: z.number().describe("The duration of the trip in days."),
   country: z.string().describe("The name of the country."),
   popularityRank: z

@@ -41,5 +41,5 @@ functionsV2.onInit(() => {
 // api functions
 export const api = functionsV2.https.onRequest(restApiApp);
 
-// user managemnt functions
+// user management functions
 export const userMgmt = functionsV1.auth.user().onCreate(createUser);

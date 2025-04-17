@@ -12,12 +12,7 @@ import {
   getAllItineraryChatResponse,
   getItineraryChatResponse,
 } from "../controller/chat-controller";
-import {
-  createItinerarySection,
-  deleteItinerarySection,
-  generateItinerarySection,
-  updateItinerarySection,
-} from "../controller/itinerary-section-controller";
+import { generateItinerarySection } from "../controller/itinerary-section-controller";
 import { generateItineraryDay } from "../controller/itinerary-day-controller";
 
 const protectedRouter = Router();
@@ -43,12 +38,6 @@ protectedRouter.post("/trip/:trip_id/day/generate", generateItineraryDay);
 protectedRouter.post(
   "/trip/:trip_id/section/generate",
   generateItinerarySection
-);
-protectedRouter.post("/trip/:trip_id/section", createItinerarySection);
-protectedRouter.put("/trip/:trip_id/sections", updateItinerarySection);
-protectedRouter.delete(
-  "/trip/:trip_id/section/:section_id",
-  deleteItinerarySection
 );
 
 export default protectedRouter;
