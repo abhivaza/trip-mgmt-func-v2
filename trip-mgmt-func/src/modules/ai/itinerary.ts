@@ -18,6 +18,11 @@ import {
   TripDayItineraryDocument,
   tripDayItineraryGenerationInputSchema,
 } from "../../types/trip-day";
+import {
+  activitySchema,
+  TripSectionActivityDocument,
+  tripSectionActivityGenerationInputSchema,
+} from "../../types/trip-section-activity";
 
 const ai = genkit({
   plugins: [googleAI()],
@@ -109,6 +114,35 @@ export const tripSectionGenerationFlow = defineFlow(
     });
 
     return llmResponse.output as TripSectionDocument;
+  }
+);
+
+export const tripSectionActivityGenerationFlow = defineFlow(
+  {
+    name: "tripSectionActivityGenerationFlow",
+    inputSchema: tripSectionActivityGenerationInputSchema,
+    outputSchema: activitySchema,
+  },
+  async (subject) => {
+    const prompt = `Output is in JSON format, do not use double quotes in JSON field value.
+      You are acting as travel advisor.
+      Create a plan for asked activity at given place.
+      Generate exactly 1 option in output schema.
+      Accommodate special request given if any.
+      Place visiting during the day: ${subject.place},
+      Activity requested: ${subject.activity},
+      Special request: ${subject.specialRequest || "None"}.
+      `;
+
+    const llmResponse = await ai.generate({
+      prompt: prompt,
+      output: { format: "json", schema: activitySchema },
+      config: {
+        temperature: 1,
+      },
+    });
+
+    return llmResponse.output as TripSectionActivityDocument;
   }
 );
 

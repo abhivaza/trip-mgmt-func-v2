@@ -1,12 +1,5 @@
 import { z } from "zod";
-
-export const activitySchema = z.object({
-  title: z.string().describe("The short name of the activity."),
-  description: z.string().describe(
-    `The description of the activity including suggested time,
-       duration, parking, location and other points in markdown format.`
-  ),
-});
+import { activitySchema } from "./trip-section-activity";
 
 export const tripSectionGenerationInputSchema = z.object({
   place: z.string().describe("The name of the city."),

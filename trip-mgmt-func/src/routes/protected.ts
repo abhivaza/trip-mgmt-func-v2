@@ -14,6 +14,7 @@ import {
 } from "../controller/chat-controller";
 import { generateItinerarySection } from "../controller/itinerary-section-controller";
 import { generateItineraryDay } from "../controller/itinerary-day-controller";
+import { generateItinerarySectionActivity } from "../controller/itinerary-section-activity-controller";
 
 const protectedRouter = Router();
 
@@ -38,6 +39,12 @@ protectedRouter.post("/trip/:trip_id/day/generate", generateItineraryDay);
 protectedRouter.post(
   "/trip/:trip_id/section/generate",
   generateItinerarySection
+);
+
+// Trip section activity routes
+protectedRouter.post(
+  "/trip/:trip_id/section/activity/generate",
+  generateItinerarySectionActivity
 );
 
 export default protectedRouter;
