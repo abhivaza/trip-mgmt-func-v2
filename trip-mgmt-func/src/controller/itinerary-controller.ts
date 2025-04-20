@@ -9,7 +9,7 @@ import {
 } from "../modules/database/itinerary";
 import { runFlow } from "@genkit-ai/flow";
 import { tripGenerationFlow } from "../modules/ai/itinerary";
-// import { tripImageGenerationFlow } from "../modules/ai/image";
+import { tripImageGenerationFlow } from "../modules/ai/image";
 import { getImageContextDocument } from "../modules/database/image";
 import { AuthenticatedRequest } from "../types/common";
 
@@ -57,13 +57,15 @@ export const generateItinerary = async (
     city: destination,
   });
 
-  const imageURL = await getImageContextDocument(response.city);
+  let imageURL = await getImageContextDocument(response.city);
 
-  if (imageURL) {
-    // runFlow(tripImageGenerationFlow, {
-    //   city: response.city,
-    //   tags: response.tags.join(", "),
-    // });
+  const random = Math.random();
+  // Generate new image only for 10%
+  if (random < 0.1) {
+    imageURL = await runFlow(tripImageGenerationFlow, {
+      city: response.city,
+      tags: response.tags.join(", "),
+    });
   }
 
   if (response?.message !== "FAILURE") {

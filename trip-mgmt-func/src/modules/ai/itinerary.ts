@@ -98,7 +98,6 @@ export const tripSectionGenerationFlow = defineFlow(
     const prompt = `Output is in JSON format, do not use double quotes in JSON field value.
       You are acting as travel advisor.
       Create a plan for asked activity at given place. 
-      Give maximum 3 options in output schema.
       Accommodate special request given if any.
       Place visiting during the day: ${subject.place},
       Activity requested: ${subject.activity},

@@ -1,15 +1,14 @@
 import { defineFlow } from "@genkit-ai/flow";
-import { imagen3 } from "@genkit-ai/vertexai";
+import vertexAI, { imagen3 } from "@genkit-ai/vertexai";
 import parseDataURL from "data-urls";
 import { imageGenerationInputSchema } from "../../types/image";
 import { uploadImageBuffer } from "../storage";
 import { storeImageData } from "../database/image";
 import { genkit } from "genkit";
-import { gemini20Flash, googleAI } from "@genkit-ai/googleai";
 
 const ai = genkit({
-  plugins: [googleAI()],
-  model: gemini20Flash,
+  plugins: [vertexAI()],
+  model: imagen3,
 });
 
 export const tripImageGenerationFlow = defineFlow(
@@ -19,12 +18,17 @@ export const tripImageGenerationFlow = defineFlow(
   },
   async (input) => {
     // Construct a request and send it to the model API.
-    const prompt = `Limit the image size to 1MB. The image should be in JPEG format.
-        Give all these instructions, and these tags: ${input.tags}, 
-        create an image of random landmark of the following city: ${input.city}.`;
+    const prompt = `You are acting as travel advisor.
+        Limit the image size to maximum 1MB. The image should be in JPEG format.
+        The image should be a banner image in landscape orientation.
+        Use vibrant color palette. 
+        Make collage of various landmarks around given place if available.
+        Use all supplied tags to customize the image.
+        Give all these instructions, create an image of the given city.
+        Tags: ${input.tags}.
+        Place: ${input.city}.`;
 
     const mediaResponse = await ai.generate({
-      model: imagen3,
       prompt: prompt,
       output: { format: "media" },
     });

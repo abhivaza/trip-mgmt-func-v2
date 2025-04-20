@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 export const activitySchema = z.object({
-  title: z.string().describe("The short name of the activity."),
+  title: z
+    .string()
+    .describe(
+      "The short name of the activity. Do not include name of the place"
+    ),
   description: z.string().describe(
     `The description of the activity including suggested time,
        duration, parking, location and other points in markdown format.`
