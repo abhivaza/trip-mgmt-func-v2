@@ -18,15 +18,13 @@ export const tripImageGenerationFlow = defineFlow(
   },
   async (input) => {
     // Construct a request and send it to the model API.
-    const prompt = `You are acting as travel advisor.
-        Limit the image size to maximum 1MB. The image should be in JPEG format.
-        The image should be a banner image in landscape orientation.
-        Use vibrant color palette. 
-        Make collage of various landmarks around given place if available.
+    const prompt = `Limit the image size to 1MB. The image should be in JPEG format.
+        The image should be in a landscape orientation.
+        Use vibrant color palette. And use water color effect.
         Use all supplied tags to customize the image.
         Give all these instructions, create an image of the given city.
         Tags: ${input.tags}.
-        Place: ${input.city}.`;
+        City: ${input.city}.`;
 
     const mediaResponse = await ai.generate({
       prompt: prompt,
