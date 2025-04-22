@@ -57,15 +57,22 @@ export const generateItinerary = async (
     city: destination,
   });
 
-  let imageURL = await getImageContextDocument(response.city);
-
-  const random = Math.random();
-  // Generate new image only for 10%
-  if (random < 0.1) {
-    imageURL = await runFlow(tripImageGenerationFlow, {
-      city: response.city,
-      tags: response.tags.join(", "),
-    });
+  let imageURL = "";
+  try {
+    const random = Math.random();
+    // Generate new image only for 10%
+    if (random < 0.1) {
+      imageURL = await runFlow(tripImageGenerationFlow, {
+        city: response.city,
+        tags: response.tags.join(", "),
+      });
+    }
+  } catch (error) {
+    console.error("Error retrieving image:", error);
+  } finally {
+    if (!imageURL) {
+      imageURL = await getImageContextDocument(response.city);
+    }
   }
 
   if (response?.message !== "FAILURE") {
