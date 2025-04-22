@@ -1,5 +1,5 @@
 import { defineFlow } from "@genkit-ai/flow";
-import vertexAI, { imagen3 } from "@genkit-ai/vertexai";
+import vertexAI, { imagen3Fast } from "@genkit-ai/vertexai";
 import parseDataURL from "data-urls";
 import { imageGenerationInputSchema } from "../../types/image";
 import { uploadImageBuffer } from "../storage";
@@ -8,7 +8,7 @@ import { genkit } from "genkit";
 
 const ai = genkit({
   plugins: [vertexAI()],
-  model: imagen3,
+  model: imagen3Fast,
 });
 
 export const tripImageGenerationFlow = defineFlow(
