@@ -14,7 +14,7 @@ const ai = genkit({
   model: gemini20Flash,
 });
 
-export const setDBItineraryData = async (
+export const createDBItinerary = async (
   llmResponse: TripDocument,
   userId?: string
 ) => {
@@ -44,7 +44,7 @@ export const setDBItineraryData = async (
   }
 };
 
-export const updateDBItineraryData = async (
+export const updateDBItinerary = async (
   docId: string,
   updatedData: Partial<TripDocument>,
   userId?: string
@@ -79,6 +79,25 @@ export const updateDBItineraryData = async (
     return docId;
   } catch (error) {
     console.error("Error updating itinerary data:", error);
+    throw error;
+  }
+};
+
+export const deleteDBItinerary = async (docId: string) => {
+  try {
+    const db = admin.firestore();
+    const docRef = db.collection(collectionName).doc(docId);
+
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      throw new Error(`Document with ID ${docId} does not exist`);
+    }
+
+    await docRef.delete();
+
+    return docId;
+  } catch (error) {
+    console.error("Error deleting itinerary:", error);
     throw error;
   }
 };
@@ -183,7 +202,7 @@ export const getItineraryRetriever = () => {
   });
 };
 
-export const getChatContext = async (subject: string): Promise<string> => {
+export const getDBChatContext = async (subject: string): Promise<string> => {
   try {
     const docs = await ai.retrieve({
       retriever: getItineraryRetriever(),
@@ -199,7 +218,7 @@ export const getChatContext = async (subject: string): Promise<string> => {
   }
 };
 
-export const getPublicItineraries = async (): Promise<
+export const getDBPublicItineraries = async (): Promise<
   Array<TripDocument & { id: string }>
 > => {
   try {

@@ -1,11 +1,12 @@
 import { NextFunction, Response } from "express";
 import {
-  getPublicItineraries,
+  getDBPublicItineraries,
   getDBItinerary,
   getDBItinerariesForUser,
-  setDBItineraryData,
+  createDBItinerary,
   shareDBItinerary,
-  updateDBItineraryData,
+  updateDBItinerary,
+  deleteDBItinerary,
 } from "../modules/database/itinerary";
 import { runFlow } from "@genkit-ai/flow";
 import { tripGenerationFlow } from "../modules/ai/itinerary";
@@ -37,13 +38,32 @@ export const updateItinerary = async (
   const tripId = req.params.trip_id;
 
   try {
-    updateDBItineraryData(tripId, req.body, req.user?.email);
+    updateDBItinerary(tripId, req.body, req.user?.email);
     return res.status(200).send({
       success: true,
       message: "Trip successfully updated",
     });
   } catch (error) {
     console.error("Error updating itinerary:", error);
+    return next(error);
+  }
+};
+
+export const deleteItinerary = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const tripId = req.params.trip_id;
+
+  try {
+    deleteDBItinerary(tripId);
+    return res.status(200).send({
+      success: true,
+      message: "Trip successfully deleted",
+    });
+  } catch (error) {
+    console.error("Error deleting itinerary:", error);
     return next(error);
   }
 };
@@ -77,7 +97,7 @@ export const generateItinerary = async (
 
   if (response?.message !== "FAILURE") {
     // Store the response in Firestore
-    const documentId = await setDBItineraryData(
+    const documentId = await createDBItinerary(
       { ...response, imageURL: imageURL ?? "" },
       req.user?.email
     );
@@ -111,7 +131,7 @@ export const getAllPublicItineraries = async (
   res: Response,
   next: NextFunction
 ) => {
-  getPublicItineraries()
+  getDBPublicItineraries()
     .then((itinerary) => {
       res.send(itinerary);
     })
