@@ -27,6 +27,7 @@ export const tripGenerationOutputSchema = z.object({
 });
 
 export type TripDocument = z.infer<typeof tripGenerationOutputSchema> & {
+  id?: string;
   createdBy?: string;
   sharedWith?: string[];
   tripSections?: TripSectionDocument[];

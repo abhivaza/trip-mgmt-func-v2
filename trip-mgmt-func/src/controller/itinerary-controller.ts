@@ -20,14 +20,17 @@ export const getItinerary = async (
   next: NextFunction
 ) => {
   const tripId = req.params.trip_id;
-  getDBItinerary(tripId)
-    .then((itinerary) => {
-      res.send(itinerary);
-    })
-    .catch((error) => {
-      console.error("Error retrieving itinerary:", error);
-      next(error);
+
+  try {
+    const tripData = await getDBItinerary(tripId);
+    res.status(200).send({
+      id: tripId,
+      ...tripData,
     });
+  } catch (error) {
+    console.error("Error retrieving itinerary:", error);
+    return next(error);
+  }
 };
 
 export const updateItinerary = async (
