@@ -3,6 +3,7 @@ import { verifyToken } from "../middleware/auth";
 
 import {
   deleteItinerary,
+  deleteShareItinerary,
   generateItinerary,
   getAllItineraries,
   getItinerary,
@@ -28,11 +29,14 @@ protectedRouter.post("/trips/chat", getAllItineraryChatResponse);
 
 // Trip routes
 protectedRouter.post("/trip/generate", generateItinerary);
+protectedRouter.post("/trip/:trip_id/chat", getItineraryChatResponse);
 protectedRouter.get("/trip/:trip_id", getItinerary);
 protectedRouter.put("/trip/:trip_id", updateItinerary);
 protectedRouter.delete("/trip/:trip_id", deleteItinerary);
-protectedRouter.post("/trip/:trip_id/chat", getItineraryChatResponse);
+
+// Trip share routes
 protectedRouter.post("/trip/:trip_id/share", shareItinerary);
+protectedRouter.delete("/trip/:trip_id/share/:email", deleteShareItinerary);
 
 // Trip day routes
 protectedRouter.post("/trip/:trip_id/day/generate", generateItineraryDay);

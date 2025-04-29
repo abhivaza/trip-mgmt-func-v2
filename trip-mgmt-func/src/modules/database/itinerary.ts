@@ -142,6 +142,25 @@ export const shareDBItinerary = async (
   }
 };
 
+export const deleteShareDBItinerary = async (
+  documentId: string,
+  email: string
+): Promise<void> => {
+  try {
+    const db = admin.firestore();
+    const docRef = db.collection(collectionName).doc(documentId);
+
+    await docRef.update({
+      sharedWith: FieldValue.arrayRemove(email),
+    });
+
+    return;
+  } catch (error) {
+    console.error("Error deleting person from shared itinerary:", error);
+    throw error;
+  }
+};
+
 export const getDBItinerariesByCity = async (
   city: string
 ): Promise<Array<TripDocument & { id: string }>> => {

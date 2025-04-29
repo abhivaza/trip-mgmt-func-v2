@@ -7,6 +7,7 @@ import {
   shareDBItinerary,
   updateDBItinerary,
   deleteDBItinerary,
+  deleteShareDBItinerary,
 } from "../modules/database/itinerary";
 import { runFlow } from "@genkit-ai/flow";
 import { tripGenerationFlow } from "../modules/ai/itinerary";
@@ -164,7 +165,7 @@ export const shareItinerary = async (
     if (itinerary?.createdBy !== req.user?.email) {
       return res
         .status(403)
-        .send({ error: "You don't have permission to share this trip" });
+        .send({ error: "You don't have permission to share this itinerary." });
     }
 
     // Share the itinerary with the friend
@@ -172,10 +173,46 @@ export const shareItinerary = async (
 
     return res.status(200).send({
       success: true,
-      message: `Trip successfully shared with ${email}`,
+      message: `Itinerary successfully shared with ${email}`,
     });
   } catch (error) {
     console.error("Error sharing itinerary:", error);
+    return next(error);
+  }
+};
+
+export const deleteShareItinerary = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const tripId = req.params.trip_id;
+  const email = req.params.email;
+
+  if (!email) {
+    return res.status(400).send({ error: "email is required" });
+  }
+
+  try {
+    // First, verify the user has access to this trip
+    const itinerary = await getDBItinerary(tripId);
+
+    // Check if the current user owns this itinerary
+    if (itinerary?.createdBy !== req.user?.email) {
+      return res.status(403).send({
+        error: "You don't have permission to remove person from itinerary.",
+      });
+    }
+
+    // Share the itinerary with the friend
+    await deleteShareDBItinerary(tripId, email);
+
+    return res.status(200).send({
+      success: true,
+      message: `Itinerary successfully removed from ${email}`,
+    });
+  } catch (error) {
+    console.error("Error deleting person from shared itinerary:", error);
     return next(error);
   }
 };
