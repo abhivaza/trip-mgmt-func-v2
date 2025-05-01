@@ -85,7 +85,7 @@ export const generateItinerary = async (
   try {
     const random = Math.random();
     // Generate new image only for 10%
-    if (random < 0.1) {
+    if (random <= 0.2) {
       imageURL = await runFlow(tripImageGenerationFlow, {
         city: response.city,
         tags: response.tags.join(", "),
