@@ -130,6 +130,7 @@ export const tripSectionActivityGenerationFlow = defineFlow(
       Accommodate special request given if any.
       Place visiting during the day: ${subject.place},
       Activity requested: ${subject.activity},
+      Current activity content: ${subject.content},
       Special request: ${subject.specialRequest || "None"}.
       `;
 
