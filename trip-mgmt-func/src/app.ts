@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import cors from "cors";
 import protectedRouter from "./routes/protected";
 import publicRouter from "./routes/public";
@@ -19,7 +19,7 @@ const corsOptions: cors.CorsOptions = {
 // Rate Limiter configuration
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window
-  max: 1000, // Maximum requests per window
+  max: 50, // Maximum requests per window
   message: "Too many requests, please try again after few minutes.",
 });
 
