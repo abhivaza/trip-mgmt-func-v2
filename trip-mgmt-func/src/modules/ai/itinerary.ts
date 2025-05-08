@@ -146,22 +146,21 @@ export const tripSectionActivityGenerationFlow = defineFlow(
   }
 );
 
-export const tripSearchFlow = defineFlow(
+export const tripChatFlow = defineFlow(
   {
-    name: "tripSearchFlow",
+    name: "tripChatFlow",
     inputSchema: z.object({
       question: z.string().describe("the search text"),
-      context: z.string().describe("the context"),
+      context: z.string().describe("the trip information"),
     }),
-    outputSchema: z.string().describe("the search result"),
+    outputSchema: z.string().describe("the search result in markdown format"),
   },
   async (subject) => {
     // Construct a request and send it to the model API.
     const prompt = `You are acting as travel advisor.
-      Use the following pieces of context only to answer queries at the end.
-      If you don't know the answer, just say that you don't know and don't try to make up an answer.
+      Use the following pieces of trip information to customize your answer if possible.
       Limit your answers to maximum 3 sentences.
-      Context: ${subject.context}.
+      Trip Information: ${subject.context}.
       Query from user: ${subject.question}.
       `;
 

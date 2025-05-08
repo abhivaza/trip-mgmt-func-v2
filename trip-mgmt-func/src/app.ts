@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import cors from "cors";
 import protectedRouter from "./routes/protected";
 import publicRouter from "./routes/public";
@@ -15,8 +16,16 @@ const corsOptions: cors.CorsOptions = {
   maxAge: 86400, // 24 hours
 };
 
+// Rate Limiter configuration
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes window
+  max: 1000, // Maximum requests per window
+  message: "Too many requests, please try again after few minutes.",
+});
+
 // Middleware
 restApiApp.use(cors(corsOptions));
+restApiApp.use(limiter);
 restApiApp.use(express.json());
 restApiApp.use(express.urlencoded({ extended: true }));
 
