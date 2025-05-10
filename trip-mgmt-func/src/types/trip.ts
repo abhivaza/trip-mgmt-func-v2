@@ -1,19 +1,19 @@
 import { z } from "zod";
 import { TripSectionDocument } from "./trip-section";
 import { itineraryDaySchema } from "./trip-day";
+import { getOneMonthFromNow } from "../utils/utility";
 
 export const tripGenerationInputSchema = z.object({
-  city: z.string().describe("The name of the city."),
+  userQuery: z.string().describe("The name of the city."),
 });
 
 export const tripGenerationOutputSchema = z.object({
   message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   city: z.string().describe("The name of the city."),
-  fromDate: z
-    .date()
-    .describe(
-      "User specified trip start date. If not specified, default date is one month from today."
-    ),
+  fromDate: z.date().describe(
+    `User specified trip start date. 
+      If not specified, default start date if first Saturday of after ${getOneMonthFromNow()}.`
+  ),
   tripDuration: z.number().describe("The duration of the trip in days."),
   country: z.string().describe("The name of the country."),
   popularityRank: z

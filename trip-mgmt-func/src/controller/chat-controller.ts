@@ -17,7 +17,7 @@ export const getItineraryChatResponse = async (
     const document = await getDBItinerary(req.params.trip_id);
     if (document) {
       const context = JSON.stringify(document);
-      const response = await runFlow(tripChatFlow, { question, context });
+      const response = await runFlow(tripChatFlow, { question, tripDetails: context });
       res.send({ answer: response });
     }
   } catch (error) {
@@ -34,7 +34,7 @@ export const getAllItineraryChatResponse = async (
   try {
     const { question } = req.body;
     const context = await getDBChatContext(question);
-    const response = await runFlow(tripChatFlow, { question, context });
+    const response = await runFlow(tripChatFlow, { question, tripDetails: context });
     res.send({ answer: response });
   } catch (error) {
     console.error("Error retrieving itinerary:", error);

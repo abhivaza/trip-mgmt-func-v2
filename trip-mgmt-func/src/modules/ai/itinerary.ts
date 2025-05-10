@@ -42,7 +42,7 @@ export const tripGenerationFlow = defineFlow(
       If city is not valid, return FAILURE in message field of output JSON document.
       If city is valid, return SUCCESS in message field of output JSON document.
       Give all these instructions, create a day by day itinerary for the city mentioned in the query.
-      Query from user: ${subject.city}.
+      Query from user: ${subject.userQuery}.
       `;
 
     const llmResponse = await ai.generate({
@@ -151,16 +151,17 @@ export const tripChatFlow = defineFlow(
     name: "tripChatFlow",
     inputSchema: z.object({
       question: z.string().describe("the search text"),
-      context: z.string().describe("the trip information"),
+      tripDetails: z.string().describe("the trip information"),
     }),
     outputSchema: z.string().describe("the search result in markdown format"),
   },
   async (subject) => {
     // Construct a request and send it to the model API.
     const prompt = `You are acting as travel advisor.
-      Use the following pieces of trip information to customize your answer if possible.
+      Use the following pieces of trip information to customize your answer if possible,
+      otherwise answer based on your knowledge.
       Limit your answers to maximum 3 sentences.
-      Trip Information: ${subject.context}.
+      Trip Information: ${subject.tripDetails}.
       Query from user: ${subject.question}.
       `;
 

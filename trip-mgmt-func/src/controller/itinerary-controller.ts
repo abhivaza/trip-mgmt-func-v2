@@ -78,7 +78,7 @@ export const generateItinerary = async (
 ) => {
   const { destination } = req.body;
   const response = await runFlow(tripGenerationFlow, {
-    city: destination,
+    userQuery: destination,
   });
 
   let imageURL = "";

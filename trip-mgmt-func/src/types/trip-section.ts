@@ -15,7 +15,7 @@ export const tripSectionGenerationOutputSchema = z.object({
   title: z.string().describe("The title of the section."),
   activities: z
     .array(activitySchema)
-    .describe("The list of things to do. Give at maximum 3 activities."),
+    .describe("The list of things to do. Limit to maximum 3 activities."),
 });
 
 export type TripSectionDocument = z.infer<
