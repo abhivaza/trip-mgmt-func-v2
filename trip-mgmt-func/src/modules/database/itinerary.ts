@@ -16,11 +16,12 @@ const ai = genkit({
 
 export const createDBItinerary = async (
   llmResponse: TripDocument,
-  userId?: string
+  email?: string
 ) => {
   try {
     const db = admin.firestore();
     const docRef = db.collection(collectionName).doc();
+    const lowerCaseEmail = email?.toLocaleLowerCase();
 
     const embedding = (
       await ai.embed({
@@ -32,7 +33,7 @@ export const createDBItinerary = async (
     await docRef.set({
       ...llmResponse,
       timestamp: new Date(),
-      createdBy: userId,
+      createdBy: lowerCaseEmail || null,
       embedding: FieldValue.vector(embedding),
       itineraryText: JSON.stringify(llmResponse.itinerary),
     });
@@ -125,14 +126,15 @@ export const shareDBItinerary = async (
   try {
     const db = admin.firestore();
     const docRef = db.collection(collectionName).doc(documentId);
+    const lowerCaseEmail = email.toLocaleLowerCase();
 
     await docRef.update({
-      sharedWith: FieldValue.arrayUnion(email),
+      sharedWith: FieldValue.arrayUnion(lowerCaseEmail),
     });
 
-    const user = await getDBUser(email);
+    const user = await getDBUser(lowerCaseEmail);
     if (!user) {
-      await signupUser(email);
+      await signupUser(lowerCaseEmail);
     }
 
     return;
@@ -149,9 +151,10 @@ export const deleteShareDBItinerary = async (
   try {
     const db = admin.firestore();
     const docRef = db.collection(collectionName).doc(documentId);
+    const lowerCaseEmail = email.toLocaleLowerCase();
 
     await docRef.update({
-      sharedWith: FieldValue.arrayRemove(email),
+      sharedWith: FieldValue.arrayRemove(lowerCaseEmail),
     });
 
     return;
@@ -184,16 +187,18 @@ export const getDBItinerariesByCity = async (
 };
 
 export const getDBItinerariesForUser = async (
-  userId: string
+  email: string
 ): Promise<Array<TripDocument & { id: string }>> => {
   try {
     const db = admin.firestore();
+    const lowerCaseEmail = email.toLocaleLowerCase();
+
     const snapshot = await db
       .collection(collectionName)
       .where(
         Filter.or(
-          Filter.where("createdBy", "==", userId),
-          Filter.where("sharedWith", "array-contains", userId)
+          Filter.where("createdBy", "==", lowerCaseEmail),
+          Filter.where("sharedWith", "array-contains", lowerCaseEmail)
         )
       )
       .orderBy("timestamp", "desc")

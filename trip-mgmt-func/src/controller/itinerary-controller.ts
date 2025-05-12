@@ -162,7 +162,10 @@ export const shareItinerary = async (
     const itinerary = await getDBItinerary(tripId);
 
     // Check if the current user owns this itinerary
-    if (itinerary?.createdBy !== req.user?.email) {
+    if (
+      itinerary?.createdBy?.toLocaleLowerCase() !==
+      req.user?.email?.toLocaleLowerCase()
+    ) {
       return res
         .status(403)
         .send({ error: "You don't have permission to share this itinerary." });
