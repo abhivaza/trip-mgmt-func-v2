@@ -19,7 +19,7 @@ const corsOptions: cors.CorsOptions = {
 // Rate Limiter configuration
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window
-  max: 50, // Maximum requests per window
+  max: 500, // Maximum requests per window
   message: "Too many requests, please try again after few minutes.",
 });
 
