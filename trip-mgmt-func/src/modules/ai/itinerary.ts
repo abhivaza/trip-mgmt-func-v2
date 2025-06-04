@@ -7,6 +7,7 @@ import {
   TripDocument,
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
+  tripReGenerationInputSchema,
 } from "../../types/trip";
 import {
   TripSectionDocument,
@@ -57,6 +58,33 @@ export const tripGenerationFlow = defineFlow(
   }
 );
 
+export const tripReGenerationFlow = defineFlow(
+  {
+    name: "tripGenerationFlow",
+    inputSchema: tripReGenerationInputSchema,
+    outputSchema: tripGenerationOutputSchema,
+  },
+  async (subject) => {
+    const prompt = `Output is in JSON format, do not use double quotes in JSON field value.
+      You are acting as travel advisor. 
+      You must regenerate itinerary for given city as per the user instruction given and existing itinerary.
+      City: ${subject.city}.
+      Existing itinerary: ${subject.content}.
+      Special request from user: ${subject.specialInstructions}.
+      `;
+
+    const llmResponse = await ai.generate({
+      prompt: prompt,
+      output: { format: "json", schema: tripGenerationOutputSchema },
+      config: {
+        temperature: 1,
+      },
+    });
+
+    return llmResponse.output as TripDocument;
+  }
+);
+
 export const tripDayItineraryGenerationFlow = defineFlow(
   {
     name: "tripDayItineraryGenerationFlow",
@@ -70,7 +98,7 @@ export const tripDayItineraryGenerationFlow = defineFlow(
       Accommodate special request given if any.
       Place visiting during the day: ${subject.place},
       Existing itinerary: ${subject.content},
-      Special request: ${subject.specialRequest || "None"}.
+      Special request: ${subject.specialInstructions || "None"}.
       `;
 
     const llmResponse = await ai.generate({
@@ -101,7 +129,7 @@ export const tripSectionGenerationFlow = defineFlow(
       Accommodate special request given if any.
       Place visiting during the day: ${subject.place},
       Activity requested: ${subject.activity},
-      Special request: ${subject.specialRequest || "None"}.
+      Special request: ${subject.specialInstructions || "None"}.
       `;
 
     const llmResponse = await ai.generate({
@@ -131,7 +159,7 @@ export const tripSectionActivityGenerationFlow = defineFlow(
       Place visiting during the day: ${subject.place},
       Activity requested: ${subject.activity},
       Current activity content: ${subject.content},
-      Special request: ${subject.specialRequest || "None"}.
+      Special request: ${subject.specialInstructions || "None"}.
       `;
 
     const llmResponse = await ai.generate({

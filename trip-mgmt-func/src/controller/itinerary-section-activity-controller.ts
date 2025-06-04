@@ -8,14 +8,14 @@ export const generateItinerarySectionActivity = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { place, activity, specialRequest } = req.body;
+  const { place, activity, specialInstructions } = req.body;
   const document = await getDBItinerary(req.params.trip_id);
   if (document) {
     const response = await runFlow(tripSectionActivityGenerationFlow, {
       activity,
       place,
       content: JSON.stringify(document.itinerary),
-      specialRequest,
+      specialInstructions: specialInstructions,
     });
     res.send(response);
   }

@@ -15,7 +15,7 @@ const ai = genkit({
 });
 
 export const createDBItinerary = async (
-  llmResponse: TripDocument,
+  tripDocument: TripDocument,
   email?: string
 ) => {
   try {
@@ -26,16 +26,16 @@ export const createDBItinerary = async (
     const embedding = (
       await ai.embed({
         embedder: textEmbedding004,
-        content: Document.fromText(JSON.stringify(llmResponse.itinerary)),
+        content: Document.fromText(JSON.stringify(tripDocument.itinerary)),
       })
     )[0].embedding;
 
     await docRef.set({
-      ...llmResponse,
+      ...tripDocument,
       timestamp: new Date(),
       createdBy: lowerCaseEmail || null,
       embedding: FieldValue.vector(embedding),
-      itineraryText: JSON.stringify(llmResponse.itinerary),
+      itineraryText: JSON.stringify(tripDocument.itinerary),
     });
 
     return docRef.id;
@@ -47,7 +47,7 @@ export const createDBItinerary = async (
 
 export const updateDBItinerary = async (
   docId: string,
-  updatedData: Partial<TripDocument>,
+  tripDocument: Partial<TripDocument>,
   userId?: string
 ) => {
   try {
@@ -56,22 +56,22 @@ export const updateDBItinerary = async (
 
     // Get any new embedding if the itinerary was updated
     let embeddingUpdate = {};
-    if (updatedData.itinerary) {
+    if (tripDocument.itinerary) {
       const embedding = (
         await ai.embed({
           embedder: textEmbedding004,
-          content: Document.fromText(JSON.stringify(updatedData.itinerary)),
+          content: Document.fromText(JSON.stringify(tripDocument.itinerary)),
         })
       )[0].embedding;
 
       embeddingUpdate = {
         embedding: FieldValue.vector(embedding),
-        itineraryText: JSON.stringify(updatedData.itinerary),
+        itineraryText: JSON.stringify(tripDocument.itinerary),
       };
     }
 
     await docRef.update({
-      ...updatedData,
+      ...tripDocument,
       lastUpdated: new Date(),
       updatedBy: userId || null,
       ...embeddingUpdate,

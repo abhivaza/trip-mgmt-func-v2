@@ -16,7 +16,7 @@ export const tripSectionActivityGenerationInputSchema = z.object({
   place: z.string().describe("The name of the city."),
   content: z.string().describe("The description of the things to do."),
   activity: z.string().describe("Thing to do during the day."),
-  specialRequest: z
+  specialInstructions: z
     .string()
     .optional()
     .describe("The special request of the user."),

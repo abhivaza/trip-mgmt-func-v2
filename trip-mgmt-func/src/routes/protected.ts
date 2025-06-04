@@ -7,6 +7,7 @@ import {
   generateItinerary,
   getAllItineraries,
   getItinerary,
+  reGenerateItinerary,
   shareItinerary,
   updateItinerary,
 } from "../controller/itinerary-controller";
@@ -29,6 +30,7 @@ protectedRouter.post("/trips/chat", getAllItineraryChatResponse);
 
 // Trip routes
 protectedRouter.post("/trip/generate", generateItinerary);
+protectedRouter.post("/trip/:trip_id/regenerate", reGenerateItinerary);
 protectedRouter.post("/trip/:trip_id/chat", getItineraryChatResponse);
 protectedRouter.get("/trip/:trip_id", getItinerary);
 protectedRouter.put("/trip/:trip_id", updateItinerary);

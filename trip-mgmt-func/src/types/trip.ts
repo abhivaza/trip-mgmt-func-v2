@@ -3,6 +3,15 @@ import { TripSectionDocument } from "./trip-section";
 import { itineraryDaySchema } from "./trip-day";
 import { getOneMonthFromNow } from "../utils/utility";
 
+export const tripReGenerationInputSchema = z.object({
+  city: z.string().describe("The name of the city."),
+  content: z.string().describe("The itinerary of the trip."),
+  specialInstructions: z
+    .string()
+    .optional()
+    .describe("The special request of the user."),
+});
+
 export const tripGenerationInputSchema = z.object({
   userQuery: z.string().describe("The name of the city."),
 });

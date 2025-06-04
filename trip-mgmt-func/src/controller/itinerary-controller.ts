@@ -10,7 +10,10 @@ import {
   deleteShareDBItinerary,
 } from "../modules/database/itinerary";
 import { runFlow } from "@genkit-ai/flow";
-import { tripGenerationFlow } from "../modules/ai/itinerary";
+import {
+  tripGenerationFlow,
+  tripReGenerationFlow,
+} from "../modules/ai/itinerary";
 import { tripImageGenerationFlow } from "../modules/ai/image";
 import { getImageContextDocument } from "../modules/database/image";
 import { AuthenticatedRequest } from "../types/common";
@@ -84,7 +87,7 @@ export const generateItinerary = async (
   let imageURL = "";
   try {
     const random = Math.random();
-    // Generate new image only for 10%
+    // Generate new image only for 20%
     if (random <= 0.2) {
       imageURL = await runFlow(tripImageGenerationFlow, {
         city: response.city,
@@ -112,6 +115,36 @@ export const generateItinerary = async (
     });
   } else {
     res.send(response);
+  }
+};
+
+export const reGenerateItinerary = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const { specialInstructions } = req.body;
+  const tripId = req.params.trip_id;
+
+  try {
+    const document = await getDBItinerary(tripId);
+
+    const response = await runFlow(tripReGenerationFlow, {
+      city: document?.city || "",
+      content: JSON.stringify(document?.itinerary),
+      specialInstructions: specialInstructions,
+    });
+
+    const updatedDocument = {
+      ...response,
+      imageURL: document?.imageURL,
+      fromDate: document?.fromDate,
+    };
+
+    await updateDBItinerary(tripId, updatedDocument, req.user?.email);
+
+    res.send(updatedDocument);
+  } catch (error) {
+    console.error("Error update itinerary:", error);
   }
 };
 
