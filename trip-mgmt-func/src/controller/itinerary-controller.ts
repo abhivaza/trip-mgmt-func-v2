@@ -138,6 +138,7 @@ export const reGenerateItinerary = async (
       ...response,
       imageURL: document?.imageURL,
       fromDate: document?.fromDate,
+      sharedWith: document?.sharedWith,
     };
 
     await updateDBItinerary(tripId, updatedDocument, req.user?.email);
