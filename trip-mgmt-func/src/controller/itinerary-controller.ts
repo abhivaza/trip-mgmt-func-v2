@@ -102,7 +102,7 @@ export const generateItinerary = async (
     }
   }
 
-  if (response?.message !== "FAILURE") {
+  if (response?.status !== "FAILURE") {
     // Store the response in Firestore
     const documentId = await createDBItinerary(
       { ...response, imageURL: imageURL ?? "" },
@@ -130,7 +130,7 @@ export const reGenerateItinerary = async (
 
     const response = await runFlow(tripReGenerationFlow, {
       city: document?.city || "",
-      content: JSON.stringify(document?.itinerary),
+      content: JSON.stringify(document?.itineraryDays),
       specialInstructions: specialInstructions,
     });
 

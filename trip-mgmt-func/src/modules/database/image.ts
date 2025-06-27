@@ -1,10 +1,10 @@
-import { ImageDocument } from "../../types/image";
 import * as admin from "firebase-admin";
 import { gemini20Flash, googleAI, textEmbedding004 } from "@genkit-ai/googleai";
 import { Document } from "@genkit-ai/ai/retriever";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 import { genkit } from "genkit";
 import { FieldValue } from "firebase-admin/firestore";
+import { TripImageDocument } from "../../types/imported";
 
 const collectionName = "trip-images";
 
@@ -13,7 +13,7 @@ const ai = genkit({
   model: gemini20Flash, // set default model
 });
 
-export const storeImageData = async (llmResponse: ImageDocument) => {
+export const storeImageData = async (llmResponse: TripImageDocument) => {
   try {
     const db = admin.firestore();
     const docRef = db.collection(collectionName).doc();

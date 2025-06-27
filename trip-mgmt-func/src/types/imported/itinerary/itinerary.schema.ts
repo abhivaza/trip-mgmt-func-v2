@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { TripSectionDocument } from "./trip-section";
-import { itineraryDaySchema } from "./trip-day";
-import { getOneMonthFromNow } from "../utils/utility";
+import { getOneMonthFromNow } from "../common/utils";
+import { ItineraryDocument } from "./itinerary.types";
+import { itineraryDaySchema } from "../itinerary-day/itinerary-day.schema";
 
 export const tripReGenerationInputSchema = z.object({
   city: z.string().describe("The name of the city."),
@@ -17,7 +17,7 @@ export const tripGenerationInputSchema = z.object({
 });
 
 export const tripGenerationOutputSchema = z.object({
-  message: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
+  status: z.string().describe("SUCCESS if city is found, otherwise FAILURE"),
   city: z.string().describe("The name of the city."),
   fromDate: z.date().describe(
     `User specified trip start date. 
@@ -31,13 +31,9 @@ export const tripGenerationOutputSchema = z.object({
   tags: z
     .array(z.string())
     .describe("The trip's tags which can be used to filter results."),
-  itinerary: z.array(itineraryDaySchema).describe("The day by day itinerary."),
-  imageURL: z.string().describe("empty field."),
-});
-
-export type TripDocument = z.infer<typeof tripGenerationOutputSchema> & {
-  id?: string;
-  createdBy?: string;
-  sharedWith?: string[];
-  tripSections?: TripSectionDocument[];
-};
+  itineraryDays: z
+    .array(itineraryDaySchema)
+    .describe("The day by day itinerary."),
+}) satisfies z.ZodType<
+  Omit<ItineraryDocument, "id" | "createdBy" | "sharedWith" | "imageURL">
+>;

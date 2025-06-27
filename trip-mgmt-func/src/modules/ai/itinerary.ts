@@ -4,26 +4,26 @@ import { z } from "zod";
 import { genkit } from "genkit";
 
 import {
-  TripDocument,
+  ItineraryDocument,
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
   tripReGenerationInputSchema,
-} from "../../types/trip";
+} from "../../types/imported";
 import {
-  TripSectionDocument,
+  ThingToDo,
   tripSectionGenerationInputSchema,
   tripSectionGenerationOutputSchema,
-} from "../../types/trip-section";
+} from "../../types/imported";
 import {
   itineraryDaySchema,
-  TripDayItineraryDocument,
+  ItineraryDay,
   tripDayItineraryGenerationInputSchema,
-} from "../../types/trip-day";
+} from "../../types/imported";
 import {
   activitySchema,
-  TripSectionActivityDocument,
+  Activity,
   tripSectionActivityGenerationInputSchema,
-} from "../../types/trip-section-activity";
+} from "../../types/imported";
 
 const ai = genkit({
   plugins: [googleAI()],
@@ -54,13 +54,13 @@ export const tripGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output as TripDocument;
+    return llmResponse.output as ItineraryDocument;
   }
 );
 
 export const tripReGenerationFlow = defineFlow(
   {
-    name: "tripGenerationFlow",
+    name: "tripReGenerationFlow",
     inputSchema: tripReGenerationInputSchema,
     outputSchema: tripGenerationOutputSchema,
   },
@@ -81,7 +81,7 @@ export const tripReGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output as TripDocument;
+    return llmResponse.output as ItineraryDocument;
   }
 );
 
@@ -112,7 +112,7 @@ export const tripDayItineraryGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output as TripDayItineraryDocument;
+    return llmResponse.output as ItineraryDay;
   }
 );
 
@@ -140,7 +140,7 @@ export const tripSectionGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output as TripSectionDocument;
+    return llmResponse.output as ThingToDo;
   }
 );
 
@@ -170,7 +170,7 @@ export const tripSectionActivityGenerationFlow = defineFlow(
       },
     });
 
-    return llmResponse.output as TripSectionActivityDocument;
+    return llmResponse.output as Activity;
   }
 );
 

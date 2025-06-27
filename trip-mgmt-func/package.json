@@ -8,7 +8,9 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "copy-types": "copyfiles -u 4 '../../trip-mgmt-types/src/**/*' './src/types/imported'",
+    "replace-types": "replace-in-file '@trip-mgmt/trip-mgmt-types' '../../types/imported' 'src/**/*.ts'",
+    "deploy-full": "npm run copy-types && npm run replace-types && npm run build && npm run deploy"
   },
   "name": "functions",
   "engines": {
@@ -44,7 +46,9 @@
     "genkit": "^1.12.0",
     "globals": "^16.2.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.0"
+    "typescript-eslint": "^8.34.0",
+    "copyfiles": "^2.4.1",
+    "replace-in-file": "^6.2.0"
   },
   "private": true
 }

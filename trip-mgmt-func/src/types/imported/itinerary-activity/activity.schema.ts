@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Activity } from "./activity.types";
 
 export const activitySchema = z.object({
   title: z
@@ -10,7 +11,7 @@ export const activitySchema = z.object({
     `The description of the activity including suggested time,
        duration, parking, location and other points in markdown format.`
   ),
-});
+}) satisfies z.ZodType<Omit<Activity, "id">>;
 
 export const tripSectionActivityGenerationInputSchema = z.object({
   place: z.string().describe("The name of the city."),
@@ -21,5 +22,3 @@ export const tripSectionActivityGenerationInputSchema = z.object({
     .optional()
     .describe("The special request of the user."),
 });
-
-export type TripSectionActivityDocument = z.infer<typeof activitySchema>;

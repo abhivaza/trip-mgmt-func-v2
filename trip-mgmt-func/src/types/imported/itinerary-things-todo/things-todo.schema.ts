@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { activitySchema } from "./trip-section-activity";
+import { activitySchema } from "../itinerary-activity";
+import { ThingToDo } from "./things-todo.types";
 
 export const tripSectionGenerationInputSchema = z.object({
   place: z.string().describe("The name of the city."),
@@ -16,8 +17,4 @@ export const tripSectionGenerationOutputSchema = z.object({
   activities: z
     .array(activitySchema)
     .describe("The list of things to do. Limit to maximum 3 activities."),
-});
-
-export type TripSectionDocument = z.infer<
-  typeof tripSectionGenerationOutputSchema
->;
+}) satisfies z.ZodType<Omit<ThingToDo, "id">>;

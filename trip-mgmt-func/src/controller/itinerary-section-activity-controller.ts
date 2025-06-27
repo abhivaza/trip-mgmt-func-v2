@@ -14,7 +14,7 @@ export const generateItinerarySectionActivity = async (
     const response = await runFlow(tripSectionActivityGenerationFlow, {
       activity,
       place,
-      content: JSON.stringify(document.itinerary),
+      content: JSON.stringify(document.itineraryDays),
       specialInstructions: specialInstructions,
     });
     res.send(response);
