@@ -8,7 +8,7 @@ import {
   tripGenerationInputSchema,
   tripGenerationOutputSchema,
   tripReGenerationInputSchema,
-} from "../../types/imported";
+} from "@/types/imported";
 import {
   ThingToDo,
   tripSectionGenerationInputSchema,
