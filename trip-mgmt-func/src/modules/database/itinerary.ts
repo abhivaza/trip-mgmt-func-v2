@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { ItineraryDocument } from "../../types/imported";
+import { ItineraryDocument } from "@/types/imported";
 import { gemini20Flash, googleAI, textEmbedding004 } from "@genkit-ai/googleai";
 import { Document } from "@genkit-ai/ai/retriever";
 import { genkit } from "genkit";

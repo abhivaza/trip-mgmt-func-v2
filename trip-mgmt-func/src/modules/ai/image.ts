@@ -4,7 +4,7 @@ import parseDataURL from "data-urls";
 import { uploadImageBuffer } from "../storage";
 import { storeImageData } from "../database/image";
 import { genkit } from "genkit";
-import { imageGenerationInputSchema } from "../../types/imported";
+import { imageGenerationInputSchema } from "@/types/imported";
 
 const ai = genkit({
   plugins: [vertexAI()],

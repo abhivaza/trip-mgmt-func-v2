@@ -4,7 +4,7 @@ import { Document } from "@genkit-ai/ai/retriever";
 import { defineFirestoreRetriever } from "@genkit-ai/firebase";
 import { genkit } from "genkit";
 import { FieldValue } from "firebase-admin/firestore";
-import { TripImageDocument } from "../../types/imported";
+import { TripImageDocument } from "@/types/imported";
 
 const collectionName = "trip-images";
 

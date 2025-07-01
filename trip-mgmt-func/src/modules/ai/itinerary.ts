@@ -13,17 +13,17 @@ import {
   ThingToDo,
   tripSectionGenerationInputSchema,
   tripSectionGenerationOutputSchema,
-} from "../../types/imported";
+} from "@/types/imported";
 import {
   itineraryDaySchema,
   ItineraryDay,
   tripDayItineraryGenerationInputSchema,
-} from "../../types/imported";
+} from "@/types/imported";
 import {
   activitySchema,
   Activity,
   tripSectionActivityGenerationInputSchema,
-} from "../../types/imported";
+} from "@/types/imported";
 
 const ai = genkit({
   plugins: [googleAI()],

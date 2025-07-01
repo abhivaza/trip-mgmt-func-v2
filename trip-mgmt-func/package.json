@@ -8,7 +8,7 @@
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
     "copy-types": "copyfiles -u 4 '../../trip-mgmt-types/src/**/*' './src/types/imported'",
-    "replace-types": "replace-in-file '@trip-mgmt/trip-mgmt-types' '../../types/imported' 'src/**/*.ts'",
+    "replace-types": "replace-in-file '@trip-mgmt/trip-mgmt-types' '@/types/imported' 'src/**/*.ts'",
     "deploy-full": "npm run copy-types && npm run replace-types && npm run build && npm run deploy"
   },
   "name": "functions",
